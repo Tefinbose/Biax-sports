@@ -70,10 +70,10 @@ export default function Header() {
             : "border-neutral-200 bg-white"
         }`}
       >
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 py-3 sm:px-8 lg:px-12">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-2.5 sm:gap-4 sm:px-8 sm:py-3 lg:px-12">
           <Link
             href="/"
-            className="block w-[130px] shrink-0 sm:w-[160px] lg:w-[180px]"
+            className="block w-[115px] shrink-0 sm:w-[150px] lg:w-[170px]"
             aria-label="BIAX SPORTS home"
           >
             <Image
@@ -82,8 +82,8 @@ export default function Header() {
               width={400}
               height={150}
               priority
-              className="h-auto max-h-[56px] w-full object-contain object-left"
-              sizes="(max-width: 640px) 130px, (max-width: 1024px) 160px, 180px"
+              className="h-auto max-h-[44px] sm:max-h-[54px] w-full object-contain object-left"
+              sizes="(max-width: 640px) 115px, (max-width: 1024px) 150px, 170px"
             />
           </Link>
 
@@ -117,7 +117,7 @@ export default function Header() {
             })}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
             <Link
               href="/shop"
               className="hidden items-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-primary md:inline-flex"
@@ -128,13 +128,13 @@ export default function Header() {
 
             <Link
               href="/cart"
-              className="relative inline-flex h-11 items-center justify-center gap-2 rounded-full border border-neutral-200 px-4 text-sm font-bold text-neutral-900 transition hover:border-primary hover:text-primary"
+              className="relative inline-flex h-10 w-10 sm:h-11 sm:w-auto sm:px-4 items-center justify-center gap-2 rounded-full border border-neutral-200 text-neutral-900 transition hover:border-neutral-900 hover:text-primary active:scale-95"
               aria-label={`Shopping cart, ${cartCount} items`}
             >
               <ShoppingBag size={19} />
-              <span className="hidden sm:inline">Cart</span>
+              <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Cart</span>
               {cartCount > 0 && (
-                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-white">
+                <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto flex h-4.5 min-w-4.5 sm:h-5 sm:min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] sm:text-[11px] font-black text-white ring-2 ring-white sm:ring-0 shadow-xs">
                   {cartCount > 99 ? "99+" : cartCount}
                 </span>
               )}
@@ -143,11 +143,11 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen((open) => !open)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-900 transition hover:bg-neutral-50 lg:hidden"
+              className="inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-900 transition hover:border-neutral-900 hover:bg-neutral-50 active:scale-95 lg:hidden"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X size={21} /> : <Menu size={21} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
