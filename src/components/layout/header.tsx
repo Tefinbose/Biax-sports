@@ -155,34 +155,59 @@ export default function Header() {
 
       {mobileMenuOpen && (
         <nav
-          className="absolute inset-x-0 top-full max-h-[calc(100vh-90px)] overflow-y-auto border-t border-neutral-200 bg-white px-5 py-6 pb-14 shadow-2xl lg:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100vh-80px)] overflow-y-auto border-t border-neutral-200 bg-white px-6 py-6 pb-12 shadow-2xl lg:hidden custom-scrollbar"
           aria-label="Mobile navigation"
         >
           <div className="mx-auto flex max-w-xl flex-col">
-            {navigation.map((item, i) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center justify-between border-b border-neutral-100 py-3.5 text-lg sm:text-xl font-black uppercase tracking-tight transition-colors ${
-                  isActive(item.href) ? "text-primary" : "text-neutral-950 active:text-primary"
-                }`}
-              >
-                <span>
-                  <span className="mr-3 text-xs font-bold tracking-[0.2em] text-neutral-400">
-                    0{i + 1}
-                  </span>
-                  {item.label}
-                </span>
-                <ArrowUpRight size={18} className="text-neutral-300" />
-              </Link>
-            ))}
+            <div className="flex flex-col divide-y divide-neutral-100">
+              {navigation.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`group flex items-center justify-between py-4 transition-all duration-200 ${
+                      active
+                        ? "text-primary"
+                        : "text-neutral-950 hover:text-primary active:text-primary"
+                    }`}
+                  >
+                    <span className="text-xl sm:text-2xl font-black uppercase tracking-tight transition-transform duration-200 group-hover:translate-x-1">
+                      {item.label}
+                    </span>
+                    <ArrowUpRight
+                      size={20}
+                      className={`transition-all duration-200 ${
+                        active
+                          ? "text-primary translate-x-0.5 -translate-y-0.5"
+                          : "text-neutral-300 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      }`}
+                    />
+                  </Link>
+                );
+              })}
+            </div>
+
             <Link
               href="/shop"
-              className="mt-6 inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-primary px-7 text-sm font-bold text-white shadow-lg shadow-primary/25 active:scale-95"
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-8 inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-primary px-7 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-hover active:scale-95"
             >
               Shop the collection
               <ArrowUpRight size={18} />
             </Link>
+
+            <div className="mt-6 flex items-center justify-between border-t border-neutral-100 pt-6 text-xs font-bold uppercase tracking-widest text-neutral-400">
+              <span>Biax Sports</span>
+              <Link
+                href="/contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-neutral-600 transition-colors hover:text-primary"
+              >
+                Need Help?
+              </Link>
+            </div>
           </div>
         </nav>
       )}
