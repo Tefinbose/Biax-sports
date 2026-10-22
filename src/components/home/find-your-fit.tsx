@@ -22,6 +22,7 @@ const cardConfigs = [
     btnBgVar: "var(--card-1-btn-bg)",
     btnTextVar: "var(--card-1-btn-text)",
     image: "/images/sports-wear/image.jpg",
+    imagePosition: "object-[center_20%]",
     circularBtnClass: "bg-white text-neutral-950 hover:bg-neutral-100",
   },
   {
@@ -30,6 +31,7 @@ const cardConfigs = [
     btnBgVar: "var(--card-2-btn-bg)",
     btnTextVar: "var(--card-2-btn-text)",
     image: "/images/martial-arts/image.jpg",
+    imagePosition: "object-[center_18%]",
     circularBtnClass: "bg-white text-neutral-950 hover:bg-neutral-100",
   },
   {
@@ -38,6 +40,7 @@ const cardConfigs = [
     btnBgVar: "var(--card-3-btn-bg)",
     btnTextVar: "var(--card-3-btn-text)",
     image: "/images/sports-equipments/pexels-mjrfilms-38593700.jpg",
+    imagePosition: "object-[center_60%]",
     circularBtnClass: "bg-white text-neutral-950 hover:bg-neutral-100 shadow-sm",
   },
 ];
@@ -73,11 +76,11 @@ export default function FindYourFit({ categories }: FindYourFitProps) {
           .accordion-container {
             display: flex;
             flex-direction: row;
-            height: 520px;
+            height: 540px;
             gap: 16px;
           }
           .accordion-card {
-            transition: flex 0.45s ease;
+            transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 28px;
             overflow: hidden;
             position: relative;
@@ -100,18 +103,18 @@ export default function FindYourFit({ categories }: FindYourFitProps) {
           .accordion-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             height: auto;
           }
           .accordion-card {
-            border-radius: 22px;
+            border-radius: 24px;
             overflow: hidden;
             position: relative;
             transition: height 0.45s ease;
             width: 100%;
           }
           .accordion-card.is-open {
-            height: 490px;
+            height: auto;
           }
           .accordion-card.is-slim {
             height: 68px;
@@ -149,7 +152,10 @@ export default function FindYourFit({ categories }: FindYourFitProps) {
               className="group inline-flex items-center gap-2 border-b-2 border-neutral-950 pb-0.5 text-xs font-bold uppercase tracking-wider text-neutral-950 transition-all duration-300 hover:border-[#D71920] hover:text-[#D71920] hover:translate-x-1 sm:text-sm"
             >
               Explore all products
-              <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <ArrowUpRight
+                size={16}
+                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
             </Link>
           </div>
         </div>
@@ -171,57 +177,59 @@ export default function FindYourFit({ categories }: FindYourFitProps) {
                 }}
               >
                 {isOpen ? (
-                  /* OPEN CARD */
-                  <div className="flex h-full flex-col justify-between p-5 sm:p-8">
-                    {/* Top Row: Category label & circular link */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.24em] opacity-75">
-                        Category {num}
-                      </span>
-                      <Link
-                        href={`/categories/${category.slug}`}
-                        aria-label={`View ${category.name} collection`}
-                        className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-95 ${config.circularBtnClass}`}
-                      >
-                        <ArrowUpRight size={19} />
-                      </Link>
+                  /* OPEN CARD (Split Layout: Text & Action on Left, Full Portrait Photo on Right without lines) */
+                  <div className="flex h-full flex-col md:flex-row md:items-stretch gap-6 p-6 sm:p-8">
+                    {/* Content Column */}
+                    <div className="flex flex-1 flex-col justify-between order-2 md:order-1 min-w-0">
+                      {/* Top Row: Category label & circular link */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.24em] opacity-80">
+                          Category {num}
+                        </span>
+                        <Link
+                          href={`/categories/${category.slug}`}
+                          aria-label={`View ${category.name} collection`}
+                          className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-95 ${config.circularBtnClass}`}
+                        >
+                          <ArrowUpRight size={19} />
+                        </Link>
+                      </div>
+
+                      {/* Middle: Title & description */}
+                      <div className="my-auto py-4">
+                        <h3 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase leading-tight tracking-[-0.04em]">
+                          {category.name}
+                        </h3>
+                        <p className="mt-2.5 max-w-md text-xs leading-relaxed opacity-85 sm:text-sm">
+                          {category.description}
+                        </p>
+                      </div>
+
+                      {/* Bottom: Pill shop button */}
+                      <div className="pt-2">
+                        <Link
+                          href={`/categories/${category.slug}`}
+                          style={{
+                            backgroundColor: config.btnBgVar,
+                            color: config.btnTextVar,
+                          }}
+                          className="inline-flex w-full sm:w-auto items-center justify-center rounded-full px-7 py-3.5 text-xs font-black uppercase tracking-wider shadow-md transition-transform hover:scale-105 active:scale-95"
+                        >
+                          Shop {category.name.toLowerCase()}
+                        </Link>
+                      </div>
                     </div>
 
-                    {/* Middle: Photo Area */}
-                    <div className="relative my-3.5 sm:my-6 flex-1 overflow-hidden rounded-2xl bg-black/10">
+                    {/* Image Column: Clean, Crystal-Clear Photo without line overlay */}
+                    <div className="relative flex-1 md:max-w-[46%] lg:max-w-[48%] h-64 sm:h-72 md:h-full min-h-[260px] md:min-h-full overflow-hidden rounded-2xl bg-black/10 order-1 md:order-2 shadow-lg">
                       <Image
                         src={config.image}
                         alt={`${category.name} preview`}
                         fill
                         priority={index === 0}
-                        className="object-cover"
-                        sizes="(max-width: 860px) 100vw, 800px"
+                        className={`object-cover ${config.imagePosition} transition-transform duration-700 hover:scale-105`}
+                        sizes="(max-width: 860px) 100vw, 600px"
                       />
-                      {/* Subtle diagonal texture overlay */}
-                      <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(135deg,transparent_0_12px,rgba(0,0,0,0.18)_12px_14px)]" />
-                    </div>
-
-                    {/* Bottom: Title, description, pill shop button */}
-                    <div className="flex flex-col gap-3.5 sm:flex-row sm:items-end sm:justify-between">
-                      <div>
-                        <h3 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase leading-tight tracking-[-0.04em]">
-                          {category.name}
-                        </h3>
-                        <p className="mt-1 sm:mt-1.5 max-w-md text-xs leading-relaxed opacity-80 sm:text-sm">
-                          {category.description}
-                        </p>
-                      </div>
-
-                      <Link
-                        href={`/categories/${category.slug}`}
-                        style={{
-                          backgroundColor: config.btnBgVar,
-                          color: config.btnTextVar,
-                        }}
-                        className="inline-flex w-full sm:w-auto shrink-0 items-center justify-center rounded-full px-6 py-3 text-xs font-black uppercase tracking-wider shadow-md transition-transform hover:scale-105 active:scale-95 sm:self-end"
-                      >
-                        Shop {category.name.toLowerCase()}
-                      </Link>
                     </div>
                   </div>
                 ) : (
