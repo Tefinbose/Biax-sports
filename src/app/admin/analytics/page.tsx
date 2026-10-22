@@ -3,7 +3,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import  AdminSidebar  from "@/components/admin/admin-sidebar";
+import AdminSidebar from "@/components/admin/admin-sidebar";
+import {
+  FiShoppingBag,
+  FiTrendingUp,
+  FiClock,
+  FiUsers,
+  FiCheckCircle,
+  FiBarChart2,
+  FiRefreshCw,
+  FiLoader,
+  FiAlertCircle,
+} from "react-icons/fi";
+import { FaRupeeSign } from "react-icons/fa6";
 
 type Summary = {
   totalOrders: number;
@@ -113,37 +125,37 @@ export default function AdminAnalyticsPage() {
       title: "Total Orders",
       value: summary?.totalOrders ?? 0,
       description: "All orders received",
-      icon: "📦",
+      icon: FiShoppingBag,
     },
     {
       title: "Paid Revenue",
       value: formatPrice(summary?.paidRevenue ?? 0),
       description: "Orders marked as paid",
-      icon: "₹",
+      icon: FaRupeeSign,
     },
     {
       title: "Pending Orders",
       value: summary?.pendingOrders ?? 0,
       description: "Awaiting processing",
-      icon: "⏳",
+      icon: FiClock,
     },
     {
       title: "Total Customers",
       value: summary?.totalCustomers ?? 0,
       description: "Estimated unique customers",
-      icon: "👥",
+      icon: FiUsers,
     },
     {
       title: "Paid Orders",
       value: summary?.paidOrders ?? 0,
       description: "Orders marked as paid",
-      icon: "✓",
+      icon: FiCheckCircle,
     },
     {
       title: "Average Paid Order",
       value: formatPrice(summary?.averagePaidOrderValue ?? 0),
       description: "Average value per paid order",
-      icon: "₹",
+      icon: FiTrendingUp,
     },
   ];
 
@@ -179,8 +191,9 @@ export default function AdminAnalyticsPage() {
               <button
                 type="button"
                 onClick={() => setRefreshKey((value) => value + 1)}
-                className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-red-700"
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-red-700 transition"
               >
+                <FiRefreshCw className={loading ? "animate-spin" : ""} />
                 Refresh Data
               </button>
             </div>
@@ -189,52 +202,58 @@ export default function AdminAnalyticsPage() {
           {error && (
             <div
               role="alert"
-              className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+              className="mt-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
             >
-              {error}
-
-              <button
-                type="button"
-                onClick={() => setRefreshKey((value) => value + 1)}
-                className="ml-2 font-bold underline"
-              >
-                Try again
-              </button>
+              <FiAlertCircle className="mt-0.5 text-lg shrink-0" />
+              <div>
+                <span>{error}</span>
+                <button
+                  type="button"
+                  onClick={() => setRefreshKey((value) => value + 1)}
+                  className="ml-2 font-bold underline"
+                >
+                  Try again
+                </button>
+              </div>
             </div>
           )}
 
           {loading ? (
             <div className="mt-8 rounded-xl border border-gray-200 bg-white py-20 text-center text-sm text-gray-500">
+              <FiLoader className="mx-auto mb-2 text-2xl animate-spin text-red-600" />
               Loading analytics...
             </div>
           ) : data ? (
             <>
               {/* Summary cards */}
               <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {stats.map((stat) => (
-                  <div
-                    key={stat.title}
-                    className="rounded-xl border border-gray-200 bg-white p-5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-gray-600">
-                        {stat.title}
+                {stats.map((stat) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div
+                      key={stat.title}
+                      className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-gray-600">
+                          {stat.title}
+                        </p>
+
+                        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600">
+                          <Icon className="text-xl" />
+                        </span>
+                      </div>
+
+                      <p className="mt-4 break-words text-2xl font-extrabold text-gray-950">
+                        {stat.value}
                       </p>
 
-                      <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-lg font-bold text-red-600">
-                        {stat.icon}
-                      </span>
+                      <p className="mt-2 text-xs text-gray-500">
+                        {stat.description}
+                      </p>
                     </div>
-
-                    <p className="mt-4 break-words text-2xl font-extrabold text-gray-950">
-                      {stat.value}
-                    </p>
-
-                    <p className="mt-2 text-xs text-gray-500">
-                      {stat.description}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </section>
 
               {/* Sales trend */}

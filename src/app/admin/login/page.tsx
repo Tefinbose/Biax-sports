@@ -4,7 +4,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
+import { FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -82,7 +82,7 @@ export default function AdminLoginPage() {
             </label>
 
             <div className="flex items-center gap-3 rounded-xl border border-neutral-300 px-4 focus-within:border-[#d71920] focus-within:ring-2 focus-within:ring-red-100">
-              <Mail size={18} className="text-neutral-400" />
+              <FiMail className="text-neutral-400 text-lg shrink-0" />
 
               <input
                 id="email"
@@ -107,7 +107,7 @@ export default function AdminLoginPage() {
             </label>
 
             <div className="flex items-center gap-3 rounded-xl border border-neutral-300 px-4 focus-within:border-[#d71920] focus-within:ring-2 focus-within:ring-red-100">
-              <LockKeyhole size={18} className="text-neutral-400" />
+              <FiLock className="text-neutral-400 text-lg shrink-0" />
 
               <input
                 id="password"
@@ -127,7 +127,7 @@ export default function AdminLoginPage() {
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 className="text-neutral-400 hover:text-neutral-700"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <FiEyeOff className="text-lg" /> : <FiEye className="text-lg" />}
               </button>
             </div>
           </div>

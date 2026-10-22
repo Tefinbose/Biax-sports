@@ -4,18 +4,18 @@
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import {
-  AlertCircle,
-  CheckCircle2,
-  Eye,
-  EyeOff,
-  LoaderCircle,
-  Package,
-  Pencil,
-  Plus,
-  Search,
-  Trash2,
-  X,
-} from "lucide-react";
+  FiAlertCircle,
+  FiCheckCircle,
+  FiEye,
+  FiEyeOff,
+  FiLoader,
+  FiPackage,
+  FiEdit2,
+  FiPlus,
+  FiSearch,
+  FiTrash2,
+  FiX,
+} from "react-icons/fi";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import AdminLogoutButton from "@/components/admin/logout-button";
 
@@ -412,7 +412,7 @@ export default function AdminProductsPage() {
             <div className="rounded-xl border border-gray-200 bg-white p-5">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-500">Total products</p>
-                <Package className="text-[#d71920]" size={21} />
+                <FiPackage className="text-[#d71920] text-xl" />
               </div>
               <p className="mt-3 text-3xl font-bold">{products.length}</p>
             </div>
@@ -435,7 +435,7 @@ export default function AdminProductsPage() {
               role="alert"
               className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"
             >
-              <AlertCircle className="mt-0.5 shrink-0" size={18} />
+              <FiAlertCircle className="mt-0.5 shrink-0 text-lg" />
               <span>{error}</span>
             </div>
           )}
@@ -445,7 +445,7 @@ export default function AdminProductsPage() {
               role="status"
               className="flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800"
             >
-              <CheckCircle2 className="mt-0.5 shrink-0" size={18} />
+              <FiCheckCircle className="mt-0.5 shrink-0 text-lg" />
               <span>{success}</span>
             </div>
           )}
@@ -470,7 +470,7 @@ export default function AdminProductsPage() {
                   onClick={resetForm}
                   className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50"
                 >
-                  <X size={16} />
+                  <FiX className="text-base" />
                   Cancel
                 </button>
               )}
@@ -659,11 +659,11 @@ export default function AdminProductsPage() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#d71920] px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving ? (
-                  <LoaderCircle className="animate-spin" size={18} />
+                  <FiLoader className="animate-spin text-lg" />
                 ) : editingId ? (
-                  <Pencil size={18} />
+                  <FiEdit2 className="text-lg" />
                 ) : (
-                  <Plus size={18} />
+                  <FiPlus className="text-lg" />
                 )}
                 {saving
                   ? "Saving..."
@@ -684,9 +684,8 @@ export default function AdminProductsPage() {
               </div>
 
               <div className="relative w-full sm:max-w-xs">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={18}
+                <FiSearch
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"
                 />
                 <input
                   type="search"
@@ -700,12 +699,12 @@ export default function AdminProductsPage() {
 
             {loading ? (
               <div className="flex items-center justify-center gap-2 p-12 text-sm text-gray-500">
-                <LoaderCircle className="animate-spin" size={20} />
+                <FiLoader className="animate-spin text-xl" />
                 Loading products...
               </div>
             ) : filteredProducts.length === 0 ? (
               <div className="p-12 text-center">
-                <Package className="mx-auto text-gray-300" size={36} />
+                <FiPackage className="mx-auto text-gray-300 text-4xl" />
                 <p className="mt-3 font-semibold">No products found</p>
                 <p className="mt-1 text-sm text-gray-500">
                   Add a product above or try another search.
@@ -740,7 +739,7 @@ export default function AdminProductsPage() {
                               />
                             ) : (
                               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
-                                <Package size={20} />
+                                <FiPackage className="text-xl text-gray-400" />
                               </div>
                             )}
                             <div>
@@ -802,9 +801,9 @@ export default function AdminProductsPage() {
                               className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
                             >
                               {product.published ? (
-                                <EyeOff size={17} />
+                                <FiEyeOff className="text-base" />
                               ) : (
-                                <Eye size={17} />
+                                <FiEye className="text-base" />
                               )}
                             </button>
 
@@ -815,7 +814,7 @@ export default function AdminProductsPage() {
                               aria-label={`Edit ${product.name}`}
                               className="rounded-lg p-2 text-blue-700 hover:bg-blue-50"
                             >
-                              <Pencil size={17} />
+                              <FiEdit2 className="text-base" />
                             </button>
 
                             <button
@@ -827,12 +826,11 @@ export default function AdminProductsPage() {
                               className="rounded-lg p-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
                             >
                               {busyId === product._id ? (
-                                <LoaderCircle
-                                  className="animate-spin"
-                                  size={17}
+                                <FiLoader
+                                  className="animate-spin text-base"
                                 />
                               ) : (
-                                <Trash2 size={17} />
+                                <FiTrash2 className="text-base" />
                               )}
                             </button>
                           </div>

@@ -4,48 +4,49 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Users,
-  ChartNoAxesCombined,
-  Settings,
-  LogOut,
-  X,
-  Dumbbell,
-} from "lucide-react";
+  FiGrid,
+  FiPackage,
+  FiShoppingCart,
+  FiUsers,
+  FiBarChart2,
+  FiSettings,
+  FiLogOut,
+  FiX,
+  FiMenu,
+} from "react-icons/fi";
+import { FaDumbbell } from "react-icons/fa6";
 import { useState } from "react";
 
 const navigation = [
   {
     label: "Dashboard",
     href: "/admin/dashboard",
-    icon: LayoutDashboard,
+    icon: FiGrid,
   },
   {
     label: "Products",
     href: "/admin/products",
-    icon: Package,
+    icon: FiPackage,
   },
   {
     label: "Orders",
     href: "/admin/orders",
-    icon: ShoppingCart,
+    icon: FiShoppingCart,
   },
   {
     label: "Customers",
     href: "/admin/customers",
-    icon: Users,
+    icon: FiUsers,
   },
   {
     label: "Analytics",
     href: "/admin/analytics",
-    icon: ChartNoAxesCombined,
+    icon: FiBarChart2,
   },
   {
     label: "Settings",
     href: "/admin/settings",
-    icon: Settings,
+    icon: FiSettings,
   },
 ];
 
@@ -92,7 +93,7 @@ export function AdminSidebar() {
           className="flex items-center gap-2"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-600 text-white">
-            <Dumbbell size={21} />
+            <FaDumbbell className="text-lg" />
           </span>
 
           <span className="text-lg font-black tracking-tight text-gray-950">
@@ -107,7 +108,7 @@ export function AdminSidebar() {
           aria-expanded={mobileOpen}
           className="rounded-lg p-2 text-gray-700 hover:bg-gray-100"
         >
-          {mobileOpen ? <X size={23} /> : <LayoutDashboard size={23} />}
+          {mobileOpen ? <FiX className="text-2xl" /> : <FiMenu className="text-2xl" />}
         </button>
       </div>
 
@@ -135,7 +136,7 @@ export function AdminSidebar() {
             className="flex items-center gap-3"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-600 text-white shadow-sm">
-              <Dumbbell size={24} />
+              <FaDumbbell className="text-xl" />
             </span>
 
             <span>
@@ -154,7 +155,7 @@ export function AdminSidebar() {
             aria-label="Close menu"
             className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
           >
-            <X size={20} />
+            <FiX className="text-xl" />
           </button>
         </div>
 
@@ -186,12 +187,11 @@ export function AdminSidebar() {
                   }`}
                 >
                   <Icon
-                    size={20}
-                    className={
+                    className={`text-lg shrink-0 ${
                       isActive
                         ? "text-red-600"
                         : "text-gray-400 group-hover:text-gray-700"
-                    }
+                    }`}
                   />
 
                   <span>{item.label}</span>
@@ -222,7 +222,7 @@ export function AdminSidebar() {
             disabled={loggingOut}
             className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-gray-600 transition-colors hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <LogOut size={20} />
+            <FiLogOut className="text-lg shrink-0" />
             <span>{loggingOut ? "Logging out..." : "Logout"}</span>
           </button>
 

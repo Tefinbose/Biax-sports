@@ -4,16 +4,16 @@
 import { useEffect, useState, type FormEvent } from "react";
 import AdminSidebar  from "@/components/admin/admin-sidebar";
 import {
-  Save,
-  Store,
-  Truck,
-  Mail,
-  Phone,
-  MapPin,
-  LoaderCircle,
-  CheckCircle2,
-  AlertCircle,
-} from "lucide-react";
+  FiSave,
+  FiShoppingBag,
+  FiTruck,
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiLoader,
+  FiCheckCircle,
+  FiAlertCircle,
+} from "react-icons/fi";
 
 type StoreSettings = {
   storeName: string;
@@ -173,7 +173,7 @@ export default function AdminSettingsPage() {
               role="status"
               className="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800"
             >
-              <CheckCircle2 size={20} />
+              <FiCheckCircle className="text-xl shrink-0" />
               {message}
             </div>
           )}
@@ -183,14 +183,14 @@ export default function AdminSettingsPage() {
               role="alert"
               className="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
             >
-              <AlertCircle size={20} />
+              <FiAlertCircle className="text-xl shrink-0" />
               {error}
             </div>
           )}
 
           {loading ? (
             <div className="flex items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white p-12 text-gray-600">
-              <LoaderCircle className="animate-spin" size={22} />
+              <FiLoader className="animate-spin text-xl" />
               Loading settings...
             </div>
           ) : (
@@ -198,7 +198,7 @@ export default function AdminSettingsPage() {
               <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
                 <div className="mb-6 flex items-center gap-3">
                   <div className="rounded-xl bg-red-50 p-3 text-red-600">
-                    <Store size={22} />
+                    <FiShoppingBag className="text-xl" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-gray-950">
@@ -241,7 +241,7 @@ export default function AdminSettingsPage() {
               <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
                 <div className="mb-6 flex items-center gap-3">
                   <div className="rounded-xl bg-red-50 p-3 text-red-600">
-                    <Mail size={22} />
+                    <FiMail className="text-xl" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-gray-950">
@@ -270,7 +270,7 @@ export default function AdminSettingsPage() {
 
                   <label className={labelClass}>
                     <span className="flex items-center gap-2">
-                      <Phone size={16} />
+                      <FiPhone className="text-base text-gray-400" />
                       Phone number
                     </span>
                     <input
@@ -287,7 +287,7 @@ export default function AdminSettingsPage() {
 
                   <label className={labelClass}>
                     <span className="flex items-center gap-2">
-                      <MapPin size={16} />
+                      <FiMapPin className="text-base text-gray-400" />
                       Business address
                     </span>
                     <textarea
@@ -307,7 +307,7 @@ export default function AdminSettingsPage() {
               <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
                 <div className="mb-6 flex items-center gap-3">
                   <div className="rounded-xl bg-red-50 p-3 text-red-600">
-                    <Truck size={22} />
+                    <FiTruck className="text-xl" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-gray-950">
@@ -388,9 +388,9 @@ export default function AdminSettingsPage() {
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-6 py-3 font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {saving ? (
-                    <LoaderCircle className="animate-spin" size={18} />
+                    <FiLoader className="animate-spin text-lg" />
                   ) : (
-                    <Save size={18} />
+                    <FiSave className="text-lg" />
                   )}
                   {saving ? "Saving..." : "Save Settings"}
                 </button>
