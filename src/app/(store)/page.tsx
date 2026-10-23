@@ -168,8 +168,8 @@ export default function HomePage() {
               <Image
                 src="/images/logo.png"
                 alt="BIAX SPORTS logo"
-                width={600}
-                height={225}
+                width={667}
+                height={595}
                 priority
                 className="h-auto w-full object-contain"
                 sizes="(max-width: 640px) 75vw, 360px"

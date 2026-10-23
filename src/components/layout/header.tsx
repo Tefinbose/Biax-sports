@@ -85,17 +85,17 @@ export default function Header() {
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-2 sm:gap-4 sm:px-8 sm:py-2.5 lg:px-12">
           <Link
             href="/"
-            className="block w-[140px] shrink-0 sm:w-[175px] md:w-[200px] lg:w-[220px]"
+            className="block shrink-0"
             aria-label="BIAX SPORTS home"
           >
             <Image
               src="/images/logo.png"
               alt="BIAX SPORTS logo"
-              width={400}
-              height={150}
+              width={667}
+              height={595}
               priority
-              className="h-auto max-h-[56px] sm:max-h-[68px] lg:max-h-[76px] w-full object-contain object-left"
-              sizes="(max-width: 640px) 140px, (max-width: 1024px) 185px, 220px"
+              className="h-14 w-auto sm:h-16 md:h-18 lg:h-[72px] object-contain object-left"
+              sizes="(max-width: 640px) 120px, (max-width: 1024px) 160px, 200px"
             />
           </Link>
 
