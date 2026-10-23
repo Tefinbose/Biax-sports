@@ -122,16 +122,20 @@ export default function BrandStatsStrip() {
       ref={ref}
       className="relative z-10 border-y border-neutral-200/80 bg-white"
     >
-      <div className="mx-auto grid max-w-[1440px] grid-cols-2 divide-x divide-y divide-neutral-200/80 md:grid-cols-4 md:divide-y-0">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-2 md:grid-cols-4">
         {stats.map((stat, i) => (
           <div
             key={i}
-            className="group flex flex-col items-center gap-2.5 px-6 py-8 text-center transition-colors duration-300 hover:bg-neutral-50 sm:py-10"
+            className={`group flex flex-col items-center justify-center gap-1.5 px-3 py-5 text-center transition-colors duration-300 hover:bg-neutral-50 sm:gap-2.5 sm:px-6 sm:py-10 ${
+              i % 2 === 0 ? "border-r border-neutral-200/80" : ""
+            } ${i < 2 ? "border-b border-neutral-200/80 md:border-b-0" : ""} ${
+              i > 0 ? "md:border-l md:border-neutral-200/80" : ""
+            }`}
           >
             <span className="text-primary transition-transform duration-300 group-hover:scale-110">
               {stat.icon}
             </span>
-            <p className="text-3xl font-black tracking-tight text-neutral-950 sm:text-4xl">
+            <p className="text-2xl font-black tracking-tight text-neutral-950 sm:text-4xl">
               <AnimatedCounter
                 target={stat.target}
                 suffix={stat.suffix ?? ""}
@@ -139,7 +143,7 @@ export default function BrandStatsStrip() {
                 started={started}
               />
             </p>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 sm:text-xs">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500 sm:text-xs">
               {stat.label}
             </p>
           </div>

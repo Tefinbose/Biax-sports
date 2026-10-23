@@ -90,7 +90,7 @@ export default function WhyChooseUs() {
           {usps.map((item, i) => (
             <div
               key={i}
-              className="group relative flex flex-col gap-4 bg-white p-7 transition-colors duration-300 hover:bg-neutral-950 sm:p-8"
+              className="group relative flex flex-col gap-3.5 bg-white p-5 transition-colors duration-300 hover:bg-neutral-950 sm:gap-4 sm:p-8"
             >
               {/* Red left accent on hover */}
               <div className="absolute left-0 top-0 h-full w-[3px] origin-bottom scale-y-0 bg-primary transition-transform duration-300 group-hover:scale-y-100" />

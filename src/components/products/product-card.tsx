@@ -177,13 +177,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             setInWishlist(toggleWishlist(productId));
           }}
           aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-          className={`absolute right-2 top-2 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full transition-all duration-200 shadow-sm ${
+          className={`absolute right-2 top-2 z-20 flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full transition-all duration-200 shadow-sm ${
             inWishlist
               ? "bg-white text-primary scale-105"
-              : "bg-white/90 text-neutral-600 hover:bg-white hover:text-primary hover:scale-105 active:scale-95 backdrop-blur-sm"
+              : "bg-white/95 text-neutral-600 hover:bg-white hover:text-primary hover:scale-105 active:scale-95 backdrop-blur-sm"
           }`}
         >
-          <Heart size={13} className={inWishlist ? "fill-primary" : ""} />
+          <Heart size={15} className={`sm:h-3.5 sm:w-3.5 ${inWishlist ? "fill-primary" : ""}`} />
         </button>
 
         {/* Hover-reveal Quick Add to Cart button */}
@@ -248,9 +248,9 @@ export default function ProductCard({ product }: ProductCardProps) {
               type="button"
               onClick={handleAddToCart}
               aria-label={`Quick add ${product.name} to cart`}
-              className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-900 transition hover:bg-primary hover:text-white md:hidden"
+              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-900 shadow-xs transition hover:bg-primary hover:text-white active:scale-95 md:hidden"
             >
-              {added ? <Check size={13} /> : <ShoppingCart size={13} />}
+              {added ? <Check size={15} className="sm:h-3.5 sm:w-3.5 text-green-600" /> : <ShoppingCart size={15} className="sm:h-3.5 sm:w-3.5" />}
             </button>
           )}
         </div>

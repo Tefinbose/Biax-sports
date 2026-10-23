@@ -259,7 +259,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-md shadow-primary/25 transition hover:bg-primary-hover disabled:opacity-70"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-md shadow-primary/25 transition hover:bg-primary-hover active:scale-95 disabled:opacity-70"
           >
             {status === "submitting" ? (
               <>

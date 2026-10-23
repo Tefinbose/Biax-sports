@@ -51,7 +51,7 @@ export default function ProductImageGallery({
       </div>
 
       {validImages.length > 1 && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
           {validImages.map((image, index) => (
             <button
               key={`${image}-${index}`}
@@ -59,7 +59,7 @@ export default function ProductImageGallery({
               onClick={() => setActiveIndex(index)}
               aria-label={`View image ${index + 1} of ${productName}`}
               aria-pressed={activeIndex === index}
-              className={`relative h-14 w-14 overflow-hidden rounded-xl border-2 bg-neutral-100 transition ${
+              className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border-2 bg-neutral-100 transition ${
                 activeIndex === index
                   ? "border-primary shadow-sm"
                   : "border-transparent opacity-70 hover:opacity-100 hover:border-neutral-300"

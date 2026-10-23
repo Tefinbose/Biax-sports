@@ -46,9 +46,19 @@ export default function Header() {
   }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+      const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+      lenis?.stop();
+    } else {
+      document.body.style.overflow = "";
+      const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+      lenis?.start();
+    }
     return () => {
       document.body.style.overflow = "";
+      const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+      lenis?.start();
     };
   }, [mobileMenuOpen]);
 
@@ -143,7 +153,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen((open) => !open)}
-              className="inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-900 transition hover:border-neutral-900 hover:bg-neutral-50 active:scale-95 lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-900 transition hover:border-neutral-900 hover:bg-neutral-50 active:scale-95 lg:hidden"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
             >
@@ -154,62 +164,98 @@ export default function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <nav
-          className="absolute inset-x-0 top-full max-h-[calc(100vh-80px)] overflow-y-auto border-t border-neutral-200 bg-white px-6 py-6 pb-12 shadow-2xl lg:hidden custom-scrollbar"
-          aria-label="Mobile navigation"
-        >
-          <div className="mx-auto flex max-w-xl flex-col">
-            <div className="flex flex-col divide-y divide-neutral-100">
-              {navigation.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`group flex items-center justify-between py-4 transition-all duration-200 ${
-                      active
-                        ? "text-primary"
-                        : "text-neutral-950 hover:text-primary active:text-primary"
-                    }`}
-                  >
-                    <span className="text-xl sm:text-2xl font-black uppercase tracking-tight transition-transform duration-200 group-hover:translate-x-1">
-                      {item.label}
-                    </span>
-                    <ArrowUpRight
-                      size={20}
-                      className={`transition-all duration-200 ${
+        <>
+          {/* Backdrop Blur Scrim */}
+          <div
+            className="fixed inset-0 top-[98px] sm:top-[106px] z-40 bg-neutral-950/60 backdrop-blur-xs transition-opacity lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Navigation Drawer */}
+          <nav
+            data-lenis-prevent
+            className="absolute inset-x-0 top-full z-50 max-h-[calc(100vh-98px)] overflow-y-auto border-t border-neutral-200 bg-white px-5 py-6 pb-12 shadow-2xl lg:hidden custom-scrollbar animate-in slide-in-from-top-2 duration-200"
+            aria-label="Mobile navigation"
+          >
+            <div className="mx-auto flex max-w-xl flex-col">
+              {/* Quick Category Badges */}
+              <div className="mb-4 flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+                <Link
+                  href="/categories/sportswear"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-950 hover:text-white transition"
+                >
+                  ⚡ Sportswear
+                </Link>
+                <Link
+                  href="/categories/martial-arts-uniforms"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-950 hover:text-white transition"
+                >
+                  🥋 Martial Arts
+                </Link>
+                <Link
+                  href="/categories/sports-equipment"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-950 hover:text-white transition"
+                >
+                  🥊 Equipment
+                </Link>
+              </div>
+
+              <div className="flex flex-col divide-y divide-neutral-100">
+                {navigation.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`group flex min-h-[52px] items-center justify-between py-3.5 transition-all duration-200 ${
                         active
-                          ? "text-primary translate-x-0.5 -translate-y-0.5"
-                          : "text-neutral-300 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                          ? "text-primary"
+                          : "text-neutral-950 hover:text-primary active:text-primary"
                       }`}
-                    />
-                  </Link>
-                );
-              })}
-            </div>
+                    >
+                      <span className="text-xl sm:text-2xl font-black uppercase tracking-tight transition-transform duration-200 group-hover:translate-x-1">
+                        {item.label}
+                      </span>
+                      <ArrowUpRight
+                        size={20}
+                        className={`transition-all duration-200 ${
+                          active
+                            ? "text-primary translate-x-0.5 -translate-y-0.5"
+                            : "text-neutral-300 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        }`}
+                      />
+                    </Link>
+                  );
+                })}
+              </div>
 
-            <Link
-              href="/shop"
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-8 inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-primary px-7 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-hover active:scale-95"
-            >
-              Shop the collection
-              <ArrowUpRight size={18} />
-            </Link>
-
-            <div className="mt-6 flex items-center justify-between border-t border-neutral-100 pt-6 text-xs font-bold uppercase tracking-widest text-neutral-400">
-              <span>Biax Sports</span>
               <Link
-                href="/contact"
+                href="/shop"
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-neutral-600 transition-colors hover:text-primary"
+                className="mt-6 inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-primary px-7 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-hover active:scale-95"
               >
-                Need Help?
+                Shop the collection
+                <ArrowUpRight size={18} />
               </Link>
+
+              <div className="mt-6 flex items-center justify-between border-t border-neutral-100 pt-5 text-xs font-bold uppercase tracking-widest text-neutral-400">
+                <span>Biax Sports · India</span>
+                <Link
+                  href="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-neutral-700 transition-colors hover:text-primary"
+                >
+                  Need Help?
+                </Link>
+              </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        </>
       )}
     </header>
   );

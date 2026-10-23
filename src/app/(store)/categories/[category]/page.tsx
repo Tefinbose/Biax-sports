@@ -178,14 +178,14 @@ export default async function CategoryPage({
             your training, discipline, and next challenge.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-6 sm:mt-8 flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none pb-1 sm:flex-wrap">
             {validCategories
               .filter((c) => c !== category)
               .map((c) => (
                 <Link
                   key={c}
                   href={`/categories/${c}`}
-                  className="rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950"
+                  className="shrink-0 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950 active:scale-95"
                 >
                   {c.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
                 </Link>

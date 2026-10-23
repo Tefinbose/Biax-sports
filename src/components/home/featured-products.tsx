@@ -203,14 +203,14 @@ function FeatureProductCard({ product }: { product: StoreProduct }) {
             setWishlisted(newState);
           }}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className={`absolute right-2.5 top-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full transition-all duration-200 ${
+          className={`absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
             wishlisted
               ? "bg-white text-[#ff3b30] shadow-sm scale-105"
-              : "bg-black/25 text-white/90 hover:bg-black/45 hover:text-white backdrop-blur-xs"
+              : "bg-black/35 text-white/95 hover:bg-black/55 hover:text-white backdrop-blur-xs active:scale-95"
           }`}
         >
           <Heart
-            size={13}
+            size={14}
             strokeWidth={2}
             className={wishlisted ? "fill-[#ff3b30]" : ""}
           />
@@ -218,14 +218,14 @@ function FeatureProductCard({ product }: { product: StoreProduct }) {
       </div>
 
       {/* Product Details */}
-      <div className="flex flex-col pt-3">
+      <div className="flex flex-col pt-2.5 sm:pt-3">
         {/* Category Pill */}
-        <span className="self-start rounded-md bg-neutral-100 px-2.5 py-0.5 text-[11px] font-medium text-neutral-600">
+        <span className="self-start rounded-md bg-neutral-100 px-2 py-0.5 text-[10px] sm:text-[11px] font-medium text-neutral-600">
           {formatCategory(product.category)}
         </span>
 
         {/* Rating Row */}
-        <div className="mt-1.5 flex items-center gap-1 text-[11px] font-medium text-neutral-600">
+        <div className="mt-1.5 flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-neutral-600">
           <Star size={11} className="fill-amber-400 text-amber-400" />
           <span className="font-bold text-neutral-800">{rating.toFixed(1)}</span>
           <span className="text-neutral-400">({reviewCount})</span>
@@ -234,18 +234,18 @@ function FeatureProductCard({ product }: { product: StoreProduct }) {
         {/* Product Title */}
         <Link
           href={`/products/${encodeURIComponent(product.slug)}`}
-          className="mt-1 line-clamp-1 text-sm font-bold text-neutral-900 transition-colors hover:text-primary"
+          className="mt-1 line-clamp-1 text-xs sm:text-sm font-bold text-neutral-900 transition-colors hover:text-primary"
         >
           {product.name}
         </Link>
 
         {/* Price Row */}
-        <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-sm sm:text-base font-bold text-neutral-950">
+        <div className="mt-1 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+          <span className="text-xs sm:text-base font-bold text-neutral-950">
             {formatPrice(product.price)}
           </span>
           {product.compareAtPrice && product.compareAtPrice > product.price && (
-            <span className="text-[11px] sm:text-xs text-neutral-400 line-through">
+            <span className="text-[10px] sm:text-xs text-neutral-400 line-through">
               {formatPrice(product.compareAtPrice)}
             </span>
           )}
@@ -324,13 +324,13 @@ export default function FeaturedProducts({
           </h2>
         </div>
 
-        {/* SEGMENTED CAPSULE TAB BAR (Centered) */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center rounded-full bg-neutral-100 p-1 text-xs font-semibold">
+        {/* SEGMENTED CAPSULE TAB BAR (Scrollable on small screens, centered on tablet/desktop) */}
+        <div className="flex justify-start sm:justify-center mb-6 overflow-x-auto scrollbar-none pb-1">
+          <div className="inline-flex shrink-0 items-center rounded-full bg-neutral-100 p-1 text-xs font-semibold">
             <button
               type="button"
               onClick={() => setActiveTab("all")}
-              className={`rounded-full px-5 py-2 transition-all duration-200 ${
+              className={`rounded-full px-4 sm:px-5 py-2 transition-all duration-200 ${
                 activeTab === "all"
                   ? "bg-[#0b1329] text-white shadow-sm"
                   : "text-neutral-600 hover:text-neutral-950"
@@ -342,7 +342,7 @@ export default function FeaturedProducts({
             <button
               type="button"
               onClick={() => setActiveTab("featured")}
-              className={`rounded-full px-5 py-2 transition-all duration-200 ${
+              className={`rounded-full px-4 sm:px-5 py-2 transition-all duration-200 ${
                 activeTab === "featured"
                   ? "bg-[#0b1329] text-white shadow-sm"
                   : "text-neutral-600 hover:text-neutral-950"
@@ -354,7 +354,7 @@ export default function FeaturedProducts({
             <button
               type="button"
               onClick={() => setActiveTab("bestsellers")}
-              className={`rounded-full px-5 py-2 transition-all duration-200 ${
+              className={`rounded-full px-4 sm:px-5 py-2 transition-all duration-200 ${
                 activeTab === "bestsellers"
                   ? "bg-[#0b1329] text-white shadow-sm"
                   : "text-neutral-600 hover:text-neutral-950"
@@ -365,8 +365,8 @@ export default function FeaturedProducts({
           </div>
         </div>
 
-        {/* 4-COLUMN CARDS ROW */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5 transition-opacity duration-300">
+        {/* 2-COLUMN ON MOBILE, 4-COLUMN ON DESKTOP */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 transition-opacity duration-300">
           {displayedItems.map((product) => (
             <FeatureProductCard
               key={`${activeTab}-${product.slug}`}

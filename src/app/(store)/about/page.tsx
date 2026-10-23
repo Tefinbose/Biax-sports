@@ -129,17 +129,17 @@ export default function AboutPage() {
             compromise.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-primary/30 transition hover:bg-primary-hover hover:-translate-y-0.5"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-primary/30 transition hover:bg-primary-hover hover:-translate-y-0.5 active:scale-95"
             >
               Explore Collection
               <ArrowUpRight size={16} />
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3.5 text-xs font-black uppercase tracking-wider text-white backdrop-blur transition hover:bg-white hover:text-neutral-950"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3.5 text-xs font-black uppercase tracking-wider text-white backdrop-blur transition hover:bg-white hover:text-neutral-950 active:scale-95"
             >
               Contact Our Team
               <ArrowRight size={16} />

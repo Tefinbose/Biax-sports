@@ -42,91 +42,94 @@ export default function Footer() {
       </div>
 
       {/* Footer links */}
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 sm:px-8 lg:grid-cols-4 lg:px-10 lg:py-16">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-8 px-5 py-10 sm:grid-cols-2 sm:gap-10 sm:px-8 lg:grid-cols-4 lg:px-10 lg:py-16">
         {/* Brand */}
         <div>
           <Link
             href="/"
             aria-label="BIAX SPORTS home"
-            className="mb-5 inline-block"
+            className="mb-4 inline-block"
           >
             <Image
               src="/images/logo-white.png"
               alt="BIAX SPORTS"
               width={160}
               height={142}
-              className="h-12 w-auto object-contain object-left sm:h-14"
+              className="h-11 w-auto object-contain object-left sm:h-14"
             />
           </Link>
 
-          <p className="max-w-xs text-sm leading-7 text-neutral-400">
+          <p className="max-w-xs text-sm leading-6 sm:leading-7 text-neutral-400">
             {siteConfig.legalName} — an Indian sports brand committed to
             quality, comfort, durability, and performance.
           </p>
 
-          <p className="mt-4 text-sm font-semibold text-white">
+          <p className="mt-3 text-xs sm:text-sm font-semibold text-white">
             {siteConfig.slogan}
           </p>
         </div>
 
-        {/* Shop */}
-        <div>
-          <h3 className="mb-5 text-sm font-bold uppercase tracking-[0.15em]">
-            Shop
-          </h3>
-          <ul className="space-y-4">
-            <li>
-              <Link
-                href="/shop"
-                className="text-sm text-neutral-400 transition hover:text-white"
-              >
-                Shop
-              </Link>
-            </li>
-            {siteConfig.categories.map((category) => (
-              <li key={category.slug}>
+        {/* 2-column grid on mobile for Shop & Company */}
+        <div className="grid grid-cols-2 gap-6 sm:contents">
+          {/* Shop */}
+          <div>
+            <h3 className="mb-4 text-xs sm:text-sm font-bold uppercase tracking-[0.15em] text-neutral-200">
+              Shop
+            </h3>
+            <ul className="space-y-3 sm:space-y-4">
+              <li>
                 <Link
-                  href={`/categories/${category.slug}`}
-                  className="text-sm text-neutral-400 transition hover:text-white"
+                  href="/shop"
+                  className="text-xs sm:text-sm text-neutral-400 transition hover:text-white"
                 >
-                  {category.name}
+                  Shop All
                 </Link>
               </li>
-            ))}
-          </ul>
-        </div>
+              {siteConfig.categories.map((category) => (
+                <li key={category.slug}>
+                  <Link
+                    href={`/categories/${category.slug}`}
+                    className="text-xs sm:text-sm text-neutral-400 transition hover:text-white"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        {/* Company */}
-        <div>
-          <h3 className="mb-5 text-sm font-bold uppercase tracking-[0.15em]">
-            Company
-          </h3>
-          <ul className="space-y-4">
-            <li>
-              <Link
-                href="/about"
-                className="text-sm text-neutral-400 transition hover:text-white"
-              >
-                About Us
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/contact"
-                className="text-sm text-neutral-400 transition hover:text-white"
-              >
-                Contact Us
-              </Link>
-            </li>
-            <li>
-              <a
-                href={`mailto:${siteConfig.email}?subject=Order%20Status%20Inquiry`}
-                className="text-sm text-neutral-400 transition hover:text-white"
-              >
-                Track / View Orders
-              </a>
-            </li>
-          </ul>
+          {/* Company */}
+          <div>
+            <h3 className="mb-4 text-xs sm:text-sm font-bold uppercase tracking-[0.15em] text-neutral-200">
+              Company
+            </h3>
+            <ul className="space-y-3 sm:space-y-4">
+              <li>
+                <Link
+                  href="/about"
+                  className="text-xs sm:text-sm text-neutral-400 transition hover:text-white"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-xs sm:text-sm text-neutral-400 transition hover:text-white"
+                >
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${siteConfig.email}?subject=Order%20Status%20Inquiry`}
+                  className="text-xs sm:text-sm text-neutral-400 transition hover:text-white"
+                >
+                  Order Tracking
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Contact */}

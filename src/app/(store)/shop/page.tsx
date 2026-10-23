@@ -70,24 +70,24 @@ export default function ShopPage() {
             essential sports equipment designed to support your journey.
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-6 sm:mt-8 flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none pb-1 sm:flex-wrap">
             <Link
               href="/categories/sportswear"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950"
+              className="shrink-0 group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 sm:px-6 sm:py-3 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950 active:scale-95"
             >
               Sportswear
             </Link>
 
             <Link
               href="/categories/martial-arts-uniforms"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950"
+              className="shrink-0 group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 sm:px-6 sm:py-3 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950 active:scale-95"
             >
               Martial Arts
             </Link>
 
             <Link
               href="/categories/sports-equipment"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950"
+              className="shrink-0 group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 sm:px-6 sm:py-3 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950 active:scale-95"
             >
               Sports Equipment
             </Link>

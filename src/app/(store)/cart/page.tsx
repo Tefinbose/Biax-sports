@@ -509,9 +509,9 @@ export default function CartPage() {
         </div>
       )}
 
-      {/* STICKY BOTTOM CHECKOUT BAR (Mobile Only) */}
+      {/* STICKY BOTTOM CHECKOUT BAR (Mobile Only with Safe-Area Padding) */}
       {items.length > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/95 px-5 py-3 shadow-[0_-8px_25px_rgba(0,0,0,0.08)] backdrop-blur-md sm:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/95 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_25px_rgba(0,0,0,0.08)] backdrop-blur-md sm:hidden">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
