@@ -7,32 +7,12 @@ import { siteConfig } from "@/config/site";
 import FindYourFit from "@/components/home/find-your-fit";
 import FeaturedProducts from "@/components/home/featured-products";
 import TestimonialsMarquee from "@/components/home/testimonials-marquee";
+import MindsetSection from "@/components/home/mindset-section";
 import { connectToDatabase } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import type { StoreProduct } from "@/components/products/product-card";
 
 export const instant = false;
-
-const values = [
-  {
-    number: "01",
-    title: "Performance first",
-    description:
-      "Thoughtfully selected sportswear and equipment for training, movement, and competition.",
-  },
-  {
-    number: "02",
-    title: "Made for the grind",
-    description:
-      "Comfort and durability for athletes who keep showing up and pushing forward.",
-  },
-  {
-    number: "03",
-    title: "Built on ambition",
-    description:
-      "A sports brand driven by discipline, progress, and the spirit of every athlete.",
-  },
-];
 
 async function FeaturedProductsSection() {
   await connection();
@@ -173,54 +153,7 @@ export default function HomePage() {
       </Suspense>
 
       {/* MINDSET */}
-      <section id="story" className="relative isolate overflow-hidden bg-neutral-950 px-5 py-14 text-white sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-        <div className="absolute -right-32 top-0 -z-10 h-[520px] w-[520px] rounded-full bg-primary/20 blur-3xl" />
-        <div className="mx-auto max-w-[1440px]">
-          <p className="mb-3 sm:mb-4 text-[10px] font-bold uppercase tracking-[0.25em] text-primary sm:text-xs">
-            The BIAX standard
-          </p>
-          <h2 className="max-w-5xl text-3xl font-black uppercase leading-[0.92] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
-            More than gear.{" "}
-            <span className="text-transparent [-webkit-text-stroke:1.8px_#d71920] sm:[-webkit-text-stroke:2px_#d71920]">
-              A mindset.
-            </span>
-          </h2>
-
-          <div className="mt-6 sm:mt-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-xl text-sm leading-7 text-neutral-400 sm:text-base sm:leading-8">
-              At BIAX SPORTS, we believe every athlete has another level to
-              reach. Our mission is to support that journey with reliable,
-              performance-focused sportswear and equipment.
-            </p>
-            <Link
-              href="/shop"
-              className="group inline-flex items-center justify-center gap-3 self-stretch sm:self-start rounded-full border border-white/30 px-7 py-4 text-sm font-bold transition hover:bg-white hover:text-neutral-950"
-            >
-              Discover BIAX SPORTS
-              <ArrowUpRight size={18} />
-            </Link>
-          </div>
-
-          <div className="mt-10 sm:mt-14 grid gap-px overflow-hidden rounded-3xl bg-white/10 md:grid-cols-3">
-            {values.map((item) => (
-              <article
-                key={item.number}
-                className="group bg-neutral-950 p-6 sm:p-10 transition duration-300 hover:bg-primary"
-              >
-                <p className="text-5xl sm:text-6xl font-black tracking-[-0.06em] text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.35)] transition group-hover:[-webkit-text-stroke:1.5px_#ffffff]">
-                  {item.number}
-                </p>
-                <h3 className="mt-6 sm:mt-10 text-xl sm:text-2xl font-black uppercase tracking-[-0.03em]">
-                  {item.title}
-                </h3>
-                <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-6 sm:leading-7 text-neutral-400 transition group-hover:text-white/90">
-                  {item.description}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <MindsetSection />
 
       {/* TESTIMONIALS MARQUEE */}
       <TestimonialsMarquee />
