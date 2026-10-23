@@ -1,113 +1,172 @@
-import {
-  BadgeCheck,
-  Gauge,
-  HeadphonesIcon,
-  RefreshCw,
-  RotateCcw,
-  Shield,
-  Truck,
-  Zap,
-} from "lucide-react";
+"use client";
 
-const usps = [
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+
+interface PromisePillar {
+  index: string;
+  tag: string;
+  title: string;
+  description: string;
+  highlight: string;
+}
+
+const pillars: PromisePillar[] = [
   {
-    icon: <Truck strokeWidth={2} size={26} />,
-    title: "Free Pan-India Shipping",
-    desc: "Free delivery on all orders across India. No hidden charges, no minimum order.",
+    index: "01",
+    tag: "ENGINEERING",
+    title: "Tournament-Grade Craft",
+    description:
+      "Every gi, activewear piece, and training kit meets national competition standards for tear-resistance, unrestricted mobility, and longevity.",
+    highlight: "National Competition Compliant",
   },
   {
-    icon: <RefreshCw strokeWidth={2} size={26} />,
-    title: "7-Day Easy Exchanges",
-    desc: "Wrong size? No problem. Hassle-free size exchanges within 7 days of delivery.",
+    index: "02",
+    tag: "FIT ASSURANCE",
+    title: "7-Day Zero-Risk Exchanges",
+    description:
+      "Wrong size? Exchange your items with doorstep reverse pickup within 7 days. Never compromise on comfort, reach, or combat range.",
+    highlight: "Doorstep Pickup Across India",
   },
   {
-    icon: <Gauge strokeWidth={2} size={26} />,
-    title: "Performance-First Design",
-    desc: "Every product is selected for athletes — tested for movement, durability and competition.",
+    index: "03",
+    tag: "LOGISTICS",
+    title: "Pan-India Direct Dispatch",
+    description:
+      "Orders dispatched within 24 hours directly from our Kozhikode logistics hub. Fast, secure courier delivery across 19,000+ PIN codes.",
+    highlight: "Free Shipping On All Orders",
   },
   {
-    icon: <BadgeCheck strokeWidth={2} size={26} />,
-    title: "Tournament-Grade Quality",
-    desc: "Gis, uniforms and gear that meet the standards of national-level competitions.",
-  },
-  {
-    icon: <Shield strokeWidth={2} size={26} />,
-    title: "Secure Payments",
-    desc: "100% safe and encrypted checkout. UPI, cards, net banking and COD accepted.",
-  },
-  {
-    icon: <HeadphonesIcon strokeWidth={2} size={26} />,
-    title: "Dedicated Support",
-    desc: "Real humans based in Kerala ready to help with sizing, orders and bulk inquiries.",
-  },
-  {
-    icon: <Zap strokeWidth={2} size={26} />,
-    title: "Fast Dispatch",
-    desc: "Orders placed before 5 PM are dispatched the same business day.",
-  },
-  {
-    icon: <RotateCcw strokeWidth={2} size={26} />,
-    title: "Bulk & Academy Orders",
-    desc: "Custom embroidery and volume discounts for clubs, academies and sports schools.",
+    index: "04",
+    tag: "ATHLETE DESK",
+    title: "Dojo & Academy Service",
+    description:
+      "Dedicated team based in Kerala offering tailored sizing guidance, custom club embroidery, and volume tier pricing for academies.",
+    highlight: "Bulk & Custom Embroidery Tiers",
   },
 ];
 
 export default function WhyChooseUs() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.offsetWidth * 0.82;
+    const current = Math.round(el.scrollLeft / cardWidth);
+    setActiveSlide(Math.min(pillars.length - 1, Math.max(0, current)));
+  };
+
+  const scrollToSlide = (idx: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.offsetWidth * 0.82;
+    el.scrollTo({ left: idx * cardWidth, behavior: "smooth" });
+    setActiveSlide(idx);
+  };
+
   return (
-    <section className="relative overflow-hidden border-t border-neutral-200/80 bg-white px-5 py-16 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-      {/* Subtle grid background */}
+    <section className="relative overflow-hidden border-t border-neutral-200/80 bg-white py-10 sm:py-16 lg:py-20">
+      {/* Background Architectural Grid Accent */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        className="pointer-events-none absolute inset-0 opacity-[0.025]"
         style={{
           backgroundImage:
             "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
+          backgroundSize: "40px 40px",
         }}
       />
 
-      <div className="relative mx-auto max-w-[1440px]">
-        {/* Header */}
-        <div className="mb-10 flex flex-col gap-4 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
+      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        {/* Compact Header: Single line on desktop, clean on mobile */}
+        <div className="mb-6 sm:mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-neutral-100 pb-5">
           <div>
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.25em] text-primary sm:text-xs">
-              The BIAX Promise
+            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.24em] text-primary sm:text-xs">
+              // The BIAX Commitment
             </p>
-            <h2 className="text-3xl font-black uppercase leading-[0.92] tracking-[-0.05em] text-neutral-950 sm:text-5xl lg:text-6xl">
-              Why athletes{" "}
-              <span className="text-transparent [-webkit-text-stroke:1.8px_#d71920] sm:[-webkit-text-stroke:2.4px_#d71920]">
-                choose us
+            <h2 className="mt-1 text-2xl font-black uppercase leading-tight tracking-tight text-neutral-950 sm:text-4xl lg:text-5xl">
+              Why Athletes{" "}
+              <span className="text-transparent [-webkit-text-stroke:1.6px_#d71920] sm:[-webkit-text-stroke:2.2px_#d71920]">
+                Choose Us
               </span>
             </h2>
           </div>
-          <p className="max-w-sm text-sm leading-7 text-neutral-500 sm:text-right">
-            From first purchase to match day — we've got every step of your
-            athletic journey covered.
-          </p>
+
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-neutral-500 max-w-xs hidden md:block">
+              Engineered for Indian athletes, fighters, and fitness competitors.
+            </p>
+            <Link
+              href="/about"
+              className="group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-900 transition hover:text-primary"
+            >
+              <span>Our Standards</span>
+              <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
         </div>
 
-        {/* USP Grid */}
-        <div className="grid grid-cols-1 gap-px bg-neutral-200/80 sm:grid-cols-2 lg:grid-cols-4">
-          {usps.map((item, i) => (
-            <div
-              key={i}
-              className="group relative flex flex-col gap-3.5 bg-white p-5 transition-colors duration-300 hover:bg-neutral-950 sm:gap-4 sm:p-8"
+        {/* 4 Pillars: Horizontal Snap-Swiper on Mobile (No endless scrolling), Clean 4-Column Row on Desktop */}
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 scrollbar-none -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 sm:overflow-visible"
+        >
+          {pillars.map((pillar) => (
+            <article
+              key={pillar.index}
+              className="group relative flex w-[84vw] shrink-0 snap-center flex-col justify-between rounded-2xl border border-neutral-200/90 bg-[#fafafa] p-5 sm:w-auto sm:p-6 transition-all duration-300 hover:border-neutral-950 hover:bg-white hover:shadow-lg hover:shadow-black/5"
             >
-              {/* Red left accent on hover */}
-              <div className="absolute left-0 top-0 h-full w-[3px] origin-bottom scale-y-0 bg-primary transition-transform duration-300 group-hover:scale-y-100" />
-
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-900 transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
-                {item.icon}
-              </span>
+              {/* Red hairline indicator */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
               <div>
-                <h3 className="text-sm font-black uppercase tracking-tight text-neutral-950 transition-colors duration-300 group-hover:text-white sm:text-base">
-                  {item.title}
+                {/* Micro Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">
+                    {pillar.index} // {pillar.tag}
+                  </span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-neutral-300 group-hover:bg-primary transition-colors" />
+                </div>
+
+                {/* Title */}
+                <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-neutral-950 group-hover:text-primary transition-colors leading-snug">
+                  {pillar.title}
                 </h3>
-                <p className="mt-2 text-xs leading-6 text-neutral-500 transition-colors duration-300 group-hover:text-neutral-300">
-                  {item.desc}
+
+                {/* Description */}
+                <p className="mt-2.5 text-xs leading-relaxed text-neutral-600 font-medium">
+                  {pillar.description}
                 </p>
               </div>
-            </div>
+
+              {/* Bottom Tag / Highlight */}
+              <div className="mt-5 pt-3.5 border-t border-neutral-200/60 flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 group-hover:text-neutral-900 transition-colors">
+                  {pillar.highlight}
+                </span>
+                <span className="text-xs text-neutral-300 group-hover:text-primary transition-colors font-mono">
+                  →
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Mobile Swipe Pagination Dots (Only visible on small screens) */}
+        <div className="mt-4 flex items-center justify-center gap-1.5 sm:hidden" aria-hidden="true">
+          {pillars.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => scrollToSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all duration-200 ${
+                activeSlide === i ? "w-6 bg-primary" : "w-1.5 bg-neutral-300"
+              }`}
+            />
           ))}
         </div>
       </div>

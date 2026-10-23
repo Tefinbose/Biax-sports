@@ -56,10 +56,34 @@ const pillars = [
 ];
 
 const milestones = [
-  { value: "100%", label: "Impact Focused", sub: "Designed for intensive physical training" },
-  { value: "3", label: "Specialized Divisions", sub: "Sportswear, Martial Arts, and Equipment" },
-  { value: "Kerala", label: "Headquartered", sub: "Kozhikode, India" },
-  { value: "24/7", label: "Athletic Obsession", sub: "Driven by discipline and progress" },
+  {
+    index: "01",
+    value: "100%",
+    label: "Impact Focused",
+    sub: "Engineered for intensive combat and physical training",
+    icon: Flame,
+  },
+  {
+    index: "02",
+    value: "3",
+    label: "Specialized Divisions",
+    sub: "Sportswear, Martial Arts Uniforms, and Training Equipment",
+    icon: Target,
+  },
+  {
+    index: "03",
+    value: "Kerala",
+    label: "Headquartered",
+    sub: "Central design and logistics hub in Kozhikode, India",
+    icon: MapPin,
+  },
+  {
+    index: "04",
+    value: "24/7",
+    label: "Athletic Obsession",
+    sub: "Driven by discipline, daily training, and athlete progress",
+    icon: Zap,
+  },
 ];
 
 const categoriesPreview = [
@@ -148,20 +172,73 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* METRICS / STATS */}
-      <section className="border-y border-neutral-200 bg-neutral-50 px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
-        <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-6 md:grid-cols-4">
-          {milestones.map((item, idx) => (
-            <div key={idx} className="flex flex-col">
-              <span className="text-2xl font-black tracking-tight text-neutral-950 sm:text-3xl lg:text-4xl">
-                {item.value}
-              </span>
-              <span className="mt-1 text-[11px] font-bold uppercase tracking-wider text-primary">
-                {item.label}
-              </span>
-              <span className="mt-0.5 text-xs text-neutral-500">{item.sub}</span>
+      {/* METRICS / STATS CONSOLE */}
+      <section
+        aria-label="Key brand metrics and heritage"
+        className="relative z-10 border-b border-neutral-200/90 bg-[#f7f7f5] px-5 py-8 sm:px-8 sm:py-12 lg:px-12"
+      >
+        <div className="mx-auto max-w-[1440px]">
+          {/* Eyebrow Label */}
+          <div className="mb-3.5 flex items-center justify-between">
+            <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-500">
+              // Telemetry & Milestones
+            </span>
+            <span className="hidden font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-400 sm:inline">
+              Built for Indian Athletes
+            </span>
+          </div>
+
+          {/* Unified Architectural Console Deck */}
+          <div className="overflow-hidden rounded-3xl border border-neutral-200/90 bg-white shadow-xl shadow-neutral-900/5">
+            <div className="grid grid-cols-2 divide-y divide-neutral-200/80 sm:grid-cols-2 lg:grid-cols-4 lg:divide-y-0 lg:divide-x">
+              {milestones.map((item, idx) => {
+                const Icon = item.icon;
+                const isEvenColMobile = idx % 2 === 1;
+
+                return (
+                  <div
+                    key={item.index}
+                    className={`group relative flex flex-col justify-between p-5 sm:p-7 lg:p-8 transition-colors duration-300 hover:bg-neutral-50/80 ${
+                      isEvenColMobile ? "border-l border-neutral-200/80 lg:border-l-0" : ""
+                    }`}
+                  >
+                    {/* Athletic red accent line that animates on hover */}
+                    <div className="absolute inset-x-0 top-0 h-[3px] bg-[#d71920] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+
+                    {/* Top Row: Tech index & Icon pill */}
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-400 group-hover:text-primary transition-colors">
+                        // {item.index}
+                      </span>
+                      <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700 transition-all duration-300 group-hover:bg-[#d71920] group-hover:text-white group-hover:scale-105">
+                        <Icon size={16} />
+                      </div>
+                    </div>
+
+                    {/* Hero Metric Number / Text */}
+                    <div className="my-4 sm:my-5">
+                      <div className="text-2xl sm:text-3xl lg:text-[40px] font-black uppercase tracking-tight text-neutral-950 font-sans leading-none">
+                        {item.value}
+                      </div>
+
+                      {/* Accent Label */}
+                      <div className="mt-2.5 flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#d71920]" />
+                        <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.16em] text-[#d71920]">
+                          {item.label}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Subtitle / Description */}
+                    <p className="border-t border-neutral-100 pt-3 text-[11px] sm:text-xs leading-relaxed text-neutral-600 font-medium">
+                      {item.sub}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
