@@ -8,7 +8,7 @@ export default function Footer() {
   const currentYear = 2026;
 
   return (
-    <footer className="bg-neutral-950 text-white">
+    <footer id="site-footer" className="bg-neutral-950 text-white">
       {/* Newsletter / brand statement */}
       <div className="border-b border-white/15">
         <div className="mx-auto grid max-w-[1440px] gap-6 px-5 py-12 sm:px-8 md:grid-cols-2 md:items-center lg:px-10 lg:py-16">

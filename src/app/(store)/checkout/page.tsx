@@ -31,7 +31,7 @@ export default function CheckoutPage() {
 
           <h1 className="mt-3 text-3xl font-black uppercase leading-tight tracking-tight text-neutral-950 sm:text-4xl lg:text-5xl">
             Order{" "}
-            <span className="text-transparent [-webkit-text-stroke:1.8px_#d71920] transition-colors duration-300 hover:text-[#d71920] sm:[-webkit-text-stroke:2.4px_#d71920]">
+            <span className="text-primary">
               checkout
             </span>
           </h1>

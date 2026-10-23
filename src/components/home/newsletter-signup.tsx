@@ -50,7 +50,7 @@ export default function NewsletterSignup() {
 
             <h2 className="text-3xl font-black uppercase leading-[0.9] tracking-[-0.05em] sm:text-5xl lg:text-6xl">
               Train harder.{" "}
-              <span className="text-transparent [-webkit-text-stroke:1.8px_#d71920] sm:[-webkit-text-stroke:2.4px_#d71920]">
+              <span className="text-primary">
                 Save more.
               </span>
             </h2>

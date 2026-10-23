@@ -37,14 +37,6 @@ const pillars: PromisePillar[] = [
       "Orders dispatched within 24 hours directly from our Kozhikode logistics hub. Fast, secure courier delivery across 19,000+ PIN codes.",
     highlight: "Free Shipping On All Orders",
   },
-  {
-    index: "04",
-    tag: "ATHLETE DESK",
-    title: "Dojo & Academy Service",
-    description:
-      "Dedicated team based in Kerala offering tailored sizing guidance, custom club embroidery, and volume tier pricing for academies.",
-    highlight: "Bulk & Custom Embroidery Tiers",
-  },
 ];
 
 export default function WhyChooseUs() {
@@ -88,7 +80,7 @@ export default function WhyChooseUs() {
             </p>
             <h2 className="mt-1 text-2xl font-black uppercase leading-tight tracking-tight text-neutral-950 sm:text-4xl lg:text-5xl">
               Why Athletes{" "}
-              <span className="text-transparent [-webkit-text-stroke:1.6px_#d71920] sm:[-webkit-text-stroke:2.2px_#d71920]">
+              <span className="text-primary">
                 Choose Us
               </span>
             </h2>
@@ -108,11 +100,11 @@ export default function WhyChooseUs() {
           </div>
         </div>
 
-        {/* 4 Pillars: Horizontal Snap-Swiper on Mobile (No endless scrolling), Clean 4-Column Row on Desktop */}
+        {/* 3 Pillars: Horizontal Snap-Swiper on Mobile, Clean 3-Column Row on Desktop */}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 scrollbar-none -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 sm:overflow-visible"
+          className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 scrollbar-none -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible"
         >
           {pillars.map((pillar) => (
             <article

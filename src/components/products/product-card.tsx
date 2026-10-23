@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, Heart, ShoppingCart, Star, Zap } from "lucide-react";
@@ -267,11 +267,49 @@ export default function ProductCard({ product }: ProductCardProps) {
 
 export function ProductAddToCart({ product }: { product: StoreProduct }) {
   const router = useRouter();
+  const inPageButtonRef = useRef<HTMLDivElement>(null);
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] ?? "");
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] ?? "");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [message, setMessage] = useState("");
+  const [hideStickyBar, setHideStickyBar] = useState(false);
+
+  useEffect(() => {
+    function updateStickyVisibility() {
+      // 1. If footer is visible or entering viewport, hide sticky bar
+      const footer = document.getElementById("site-footer");
+      if (footer) {
+        const footerRect = footer.getBoundingClientRect();
+        if (footerRect.top <= window.innerHeight) {
+          setHideStickyBar(true);
+          return;
+        }
+      }
+
+      // 2. If the in-page Add to Cart button is on screen, hide sticky bar to prevent duplicates
+      if (inPageButtonRef.current) {
+        const btnRect = inPageButtonRef.current.getBoundingClientRect();
+        const isInPageVisible =
+          btnRect.top < window.innerHeight && btnRect.bottom > 0;
+        if (isInPageVisible) {
+          setHideStickyBar(true);
+          return;
+        }
+      }
+
+      setHideStickyBar(false);
+    }
+
+    window.addEventListener("scroll", updateStickyVisibility, { passive: true });
+    window.addEventListener("resize", updateStickyVisibility, { passive: true });
+    updateStickyVisibility();
+
+    return () => {
+      window.removeEventListener("scroll", updateStickyVisibility);
+      window.removeEventListener("resize", updateStickyVisibility);
+    };
+  }, []);
 
   function handleAddToCart() {
     setMessage("");
@@ -373,7 +411,7 @@ export function ProductAddToCart({ product }: { product: StoreProduct }) {
       )}
 
       {/* DESKTOP / IN-PAGE ACTION BUTTONS */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div ref={inPageButtonRef} className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="inline-flex h-12 w-fit items-center rounded-full border border-neutral-300 bg-neutral-50 px-2">
           <button
             type="button"
@@ -436,7 +474,13 @@ export function ProductAddToCart({ product }: { product: StoreProduct }) {
       )}
 
       {/* FLIPKART STYLE STICKY BOTTOM BAR (Mobile Viewport Only) */}
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200/90 bg-white/95 px-3 py-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_25px_rgba(0,0,0,0.12)] backdrop-blur-md sm:hidden">
+      <div
+        className={`fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200/90 bg-white/95 px-3 py-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_25px_rgba(0,0,0,0.12)] backdrop-blur-md transition-all duration-300 sm:hidden ${
+          hideStickyBar
+            ? "translate-y-full opacity-0 pointer-events-none"
+            : "translate-y-0 opacity-100"
+        }`}
+      >
         {/* Quick Toast Feedback */}
         {added && (
           <div className="mb-2 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-[11px] font-bold text-green-800 animate-in fade-in slide-in-from-bottom-2">

@@ -135,7 +135,7 @@ export default function FindYourFit({ categories }: FindYourFitProps) {
             </p>
             <h2 className="mt-1 text-3xl font-black uppercase leading-[0.92] tracking-[-0.05em] text-neutral-950 sm:text-5xl lg:text-6xl">
               Find your{" "}
-              <span className="text-transparent [-webkit-text-stroke:1.8px_#d71920] sm:[-webkit-text-stroke:2.4px_#d71920]">
+              <span className="text-primary">
                 fit
               </span>
             </h2>

@@ -318,7 +318,7 @@ export default function FeaturedProducts({
           </p>
           <h2 className="text-3xl font-black uppercase leading-[0.92] tracking-[-0.05em] text-neutral-950 sm:text-5xl lg:text-6xl">
             Featured &amp;{" "}
-            <span className="text-transparent [-webkit-text-stroke:1.8px_#d71920] sm:[-webkit-text-stroke:2.4px_#d71920] transition-colors duration-300 hover:text-[#d71920]">
+            <span className="text-primary">
               Best-Sellers
             </span>
           </h2>

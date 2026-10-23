@@ -82,10 +82,10 @@ export default function Header() {
             : "border-neutral-200 bg-white"
         }`}
       >
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-2.5 sm:gap-4 sm:px-8 sm:py-3 lg:px-12">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-2 sm:gap-4 sm:px-8 sm:py-2.5 lg:px-12">
           <Link
             href="/"
-            className="block w-[115px] shrink-0 sm:w-[150px] lg:w-[170px]"
+            className="block w-[140px] shrink-0 sm:w-[175px] md:w-[200px] lg:w-[220px]"
             aria-label="BIAX SPORTS home"
           >
             <Image
@@ -94,8 +94,8 @@ export default function Header() {
               width={400}
               height={150}
               priority
-              className="h-auto max-h-[44px] sm:max-h-[54px] w-full object-contain object-left"
-              sizes="(max-width: 640px) 115px, (max-width: 1024px) 150px, 170px"
+              className="h-auto max-h-[56px] sm:max-h-[68px] lg:max-h-[76px] w-full object-contain object-left"
+              sizes="(max-width: 640px) 140px, (max-width: 1024px) 185px, 220px"
             />
           </Link>
 
@@ -169,7 +169,7 @@ export default function Header() {
         <>
           {/* Backdrop Blur Scrim */}
           <div
-            className="fixed inset-0 top-[98px] sm:top-[106px] z-40 bg-neutral-950/60 backdrop-blur-xs transition-opacity lg:hidden"
+            className="fixed inset-0 top-[106px] sm:top-[118px] z-40 bg-neutral-950/60 backdrop-blur-xs transition-opacity lg:hidden"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
