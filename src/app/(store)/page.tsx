@@ -6,8 +6,10 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import FindYourFit from "@/components/home/find-your-fit";
 import FeaturedProducts from "@/components/home/featured-products";
-import TestimonialsMarquee from "@/components/home/testimonials-marquee";
+import WhyChooseUs from "@/components/home/why-choose-us";
+import NewsletterSignup from "@/components/home/newsletter-signup";
 import MindsetSection from "@/components/home/mindset-section";
+import BrandStatsStrip from "@/components/home/brand-stats-strip";
 import { connectToDatabase } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import type { StoreProduct } from "@/components/products/product-card";
@@ -21,11 +23,8 @@ async function FeaturedProductsSection() {
   try {
     await connectToDatabase();
     const results = await Product.find({ published: true })
-      .select(
-        "name slug shortDescription category price compareAtPrice images stock featured",
-      )
       .sort({ featured: -1, createdAt: -1 })
-      .limit(8)
+      .limit(12)
       .lean();
 
     products = results.map((product) => ({
@@ -37,9 +36,10 @@ async function FeaturedProductsSection() {
       category: product.category,
       price: product.price,
       compareAtPrice: product.compareAtPrice,
-      images: product.images ?? [],
+      images: Array.isArray(product.images) ? product.images : [],
       stock: product.stock,
-      featured: product.featured,
+      featured: Boolean(product.featured),
+      bestSeller: Boolean((product as unknown as Record<string, unknown>).bestSeller ?? (product.stock > 0)),
     }));
   } catch (error) {
     console.warn("Could not load products for HomePage from MongoDB:", error);
@@ -80,6 +80,42 @@ export default function HomePage() {
               {siteConfig.tagline} Sportswear, martial arts uniforms and
               essential equipment designed to move with your ambition.
             </p>
+
+            {/* Animated keyword ticker */}
+            <div className="mt-5 sm:mt-6 overflow-hidden" aria-hidden="true">
+              <div className="hero-ticker flex w-max gap-6 text-[11px] font-black uppercase tracking-[0.22em] text-white/55">
+                {[
+                  "Performance",
+                  "•",
+                  "Durability",
+                  "•",
+                  "Discipline",
+                  "•",
+                  "Ambition",
+                  "•",
+                  "Strength",
+                  "•",
+                  "Resilience",
+                  "•",
+                  "Performance",
+                  "•",
+                  "Durability",
+                  "•",
+                  "Discipline",
+                  "•",
+                  "Ambition",
+                  "•",
+                  "Strength",
+                  "•",
+                  "Resilience",
+                  "•",
+                ].map((word, i) => (
+                  <span key={i} className={word === "•" ? "text-primary" : ""}>
+                    {word}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <div className="relative z-10 mt-8 sm:mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -144,6 +180,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* BRAND STATS STRIP */}
+      <BrandStatsStrip />
+
       {/* FIND YOUR FIT ACCORDION */}
       <FindYourFit categories={siteConfig.categories} />
 
@@ -155,8 +194,30 @@ export default function HomePage() {
       {/* MINDSET */}
       <MindsetSection />
 
-      {/* TESTIMONIALS MARQUEE */}
-      <TestimonialsMarquee />
+      {/* WHY CHOOSE US */}
+      <WhyChooseUs />
+
+      {/* NEWSLETTER */}
+      <NewsletterSignup />
+
+      {/* TRUST SIGNALS BAR */}
+      <div className="border-t border-neutral-200/60 bg-neutral-50">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center gap-6 px-5 py-5 sm:gap-10 sm:px-8 lg:px-12">
+          {[
+            { icon: "🚚", text: "Free shipping across India" },
+            { icon: "↩️", text: "7-day easy exchanges" },
+            { icon: "🏆", text: "Tournament-grade quality" },
+            { icon: "🇮🇳", text: "Proudly made for Indian athletes" },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <span className="text-base sm:text-lg" role="img" aria-hidden="true">{item.icon}</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                {item.text}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* FINAL CTA */}
       <section className="relative isolate overflow-hidden bg-primary px-5 py-14 text-white sm:px-8 sm:py-24 lg:px-12">

@@ -1,6 +1,7 @@
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 import ShopProductList from "@/components/products/shop-product-list";
@@ -33,13 +34,26 @@ export default function ShopPage() {
   return (
     <>
       {/* SHOP HEADER */}
-      <section className="relative isolate overflow-hidden bg-neutral-950 px-5 py-12 text-white sm:px-8 sm:py-16 lg:px-12 lg:py-20">
-        {/* athletic diagonal stripes & primary glow */}
-        <div className="absolute inset-0 -z-10 bg-[repeating-linear-gradient(115deg,transparent_0_46px,rgba(255,255,255,0.04)_46px_48px)]" />
-        <div className="absolute -right-32 top-0 -z-10 h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 -z-10 h-[360px] w-[360px] rounded-full border border-white/10" />
+      <section className="relative overflow-hidden bg-neutral-950 px-5 py-14 text-white sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+        {/* Background image matching shop collection with dark overlay for readability */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1920&q=80"
+            alt="BIAX sports training collection"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-right md:object-center opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-neutral-950/25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-transparent to-neutral-950/40" />
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(115deg,transparent_0_46px,rgba(255,255,255,0.02)_46px_48px)]" />
+        </div>
 
-        <div className="mx-auto max-w-[1440px]">
+        {/* athletic primary glow */}
+        <div className="pointer-events-none absolute -right-24 top-0 z-0 h-[420px] w-[420px] rounded-full bg-primary/25 blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-[1440px]">
           <p className="mb-4 inline-flex items-center gap-2.5 rounded-full bg-white/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-white backdrop-blur sm:text-xs">
             BIAX SPORTS · Collection
           </p>

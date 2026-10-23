@@ -37,12 +37,31 @@ export default function TestimonialsMarquee() {
       {/* SECTION HEADER */}
       <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="text-[clamp(1.15rem,5.2vw,2.5rem)] font-black uppercase leading-tight tracking-tight text-neutral-950 whitespace-nowrap">
-            Trusted by athletes{" "}
-            <span className="text-transparent [-webkit-text-stroke:1.6px_#d71920] sm:[-webkit-text-stroke:2.4px_#d71920] transition-colors duration-300 hover:text-[#d71920]">
-              across India
-            </span>
-          </h2>
+          <div>
+            {/* Aggregate rating stat */}
+            <div className="mb-5 flex flex-wrap items-center gap-3 sm:gap-4">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 shadow-sm">
+                <div className="flex items-center gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <span className="text-xs font-black text-neutral-900">4.9</span>
+                <span className="text-[11px] font-semibold text-neutral-500">avg. rating</span>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 shadow-sm">
+                <CheckCircle2 size={13} className="text-blue-500 shrink-0" />
+                <span className="text-[11px] font-bold text-neutral-600">200+ Verified Google Reviews</span>
+              </div>
+            </div>
+
+            <h2 className="text-[clamp(1.15rem,5.2vw,2.5rem)] font-black uppercase leading-tight tracking-tight text-neutral-950 whitespace-nowrap">
+              Trusted by athletes{" "}
+              <span className="text-transparent [-webkit-text-stroke:1.6px_#d71920] sm:[-webkit-text-stroke:2.4px_#d71920] transition-colors duration-300 hover:text-[#d71920]">
+                across India
+              </span>
+            </h2>
+          </div>
         </div>
       </div>
 

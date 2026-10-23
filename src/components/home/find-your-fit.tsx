@@ -221,15 +221,17 @@ export default function FindYourFit({ categories }: FindYourFitProps) {
                     </div>
 
                     {/* Image Column: Clean, Crystal-Clear Photo without line overlay */}
-                    <div className="relative flex-1 md:max-w-[46%] lg:max-w-[48%] h-64 sm:h-72 md:h-full min-h-[260px] md:min-h-full overflow-hidden rounded-2xl bg-black/10 order-1 md:order-2 shadow-lg">
+                    <div className="relative flex-1 md:max-w-[46%] lg:max-w-[48%] h-64 sm:h-72 md:h-full min-h-[260px] md:min-h-full overflow-hidden rounded-2xl bg-black/10 order-1 md:order-2 shadow-lg group/img">
                       <Image
                         src={config.image}
                         alt={`${category.name} preview`}
                         fill
                         priority={index === 0}
-                        className={`object-cover ${config.imagePosition} transition-transform duration-700 hover:scale-105`}
+                        className={`object-cover ${config.imagePosition} transition-transform duration-700 group-hover/img:scale-105`}
                         sizes="(max-width: 860px) 100vw, 600px"
                       />
+                      {/* Shimmer overlay on hover */}
+                      <div className="pointer-events-none absolute inset-0 animate-shimmer opacity-0 transition-opacity duration-500 group-hover/img:opacity-100" />
                     </div>
                   </div>
                 ) : (

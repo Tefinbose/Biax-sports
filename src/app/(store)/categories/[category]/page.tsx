@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -16,6 +17,27 @@ const validCategories = [
 ] as const;
 
 type CategoryType = (typeof validCategories)[number];
+
+const categoryHeroImages: Record<
+  CategoryType,
+  { src: string; alt: string; position: string }
+> = {
+  sportswear: {
+    src: "/images/sports-wear/image.jpg",
+    alt: "BIAX sportswear training collection",
+    position: "object-center",
+  },
+  "martial-arts-uniforms": {
+    src: "/images/martial-arts/image.jpg",
+    alt: "BIAX martial arts uniform and combat gear",
+    position: "object-[center_25%]",
+  },
+  "sports-equipment": {
+    src: "/images/sports-equipments/pexels-mjrfilms-38593700.jpg",
+    alt: "BIAX tournament sports equipment",
+    position: "object-[center_60%]",
+  },
+};
 
 export function generateStaticParams() {
   return validCategories.map((category) => ({ category }));
@@ -105,16 +127,33 @@ export default async function CategoryPage({
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
+  const currentCategory = category as CategoryType;
+  const heroConfig =
+    categoryHeroImages[currentCategory] ?? categoryHeroImages.sportswear;
+
   return (
     <main className="min-h-screen bg-white">
       {/* CATEGORY HERO */}
-      <section className="relative isolate overflow-hidden bg-neutral-950 px-5 py-12 text-white sm:px-8 sm:py-16 lg:px-12 lg:py-20">
-        {/* athletic diagonal stripes & primary glow */}
-        <div className="absolute inset-0 -z-10 bg-[repeating-linear-gradient(115deg,transparent_0_46px,rgba(255,255,255,0.04)_46px_48px)]" />
-        <div className="absolute -right-32 top-0 -z-10 h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 -z-10 h-[360px] w-[360px] rounded-full border border-white/10" />
+      <section className="relative overflow-hidden bg-neutral-950 px-5 py-14 text-white sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+        {/* Category matching background image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={heroConfig.src}
+            alt={heroConfig.alt}
+            fill
+            priority
+            sizes="100vw"
+            className={`object-cover ${heroConfig.position} opacity-65`}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-neutral-950/25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-transparent to-neutral-950/40" />
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(115deg,transparent_0_46px,rgba(255,255,255,0.02)_46px_48px)]" />
+        </div>
 
-        <div className="mx-auto max-w-[1440px]">
+        {/* athletic primary glow */}
+        <div className="pointer-events-none absolute -right-24 top-0 z-0 h-[420px] w-[420px] rounded-full bg-primary/25 blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-[1440px]">
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <Link
               href="/shop"

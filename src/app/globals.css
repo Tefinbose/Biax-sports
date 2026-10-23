@@ -1,4 +1,5 @@
 
+@import "lenis/dist/lenis.css";
 @import "tailwindcss";
 
 @theme inline {
@@ -23,8 +24,19 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     scroll-padding-top: 96px;
+  }
+
+  /* Lenis smooth momentum scrolling integration */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  html.lenis,
+  html.lenis-smooth {
+    scroll-behavior: auto !important;
   }
 
   body {
@@ -161,6 +173,40 @@
 
 .animate-marquee {
   animation: marquee 30s linear infinite;
+}
+
+@keyframes heroTicker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hero-ticker {
+  animation: heroTicker 22s linear infinite;
+  will-change: transform;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.2s infinite;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
