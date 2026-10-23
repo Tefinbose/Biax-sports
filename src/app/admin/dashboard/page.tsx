@@ -15,6 +15,7 @@ import {
   FiCheckCircle,
   FiClock,
   FiAlertCircle,
+  FiTag,
 } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa6";
 
@@ -22,6 +23,7 @@ import { getAdminSession } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/mongodb";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
+import Coupon from "@/models/Coupon";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import AdminLogoutButton from "@/components/admin/logout-button";
 
@@ -112,6 +114,7 @@ async function DashboardContent() {
     uniqueCustomers,
     recentSales,
     recentOrders,
+    activeCoupons,
   ] = await Promise.all([
     // Aggregate overall order stats & revenue
     Order.aggregate([
@@ -188,6 +191,9 @@ async function DashboardContent() {
       .sort({ createdAt: -1 })
       .limit(5)
       .lean(),
+
+    // Active coupons in store
+    Coupon.countDocuments({ active: true }),
   ]);
 
   const totalOrders = orderStats[0]?.totalOrders ?? 0;
@@ -280,6 +286,15 @@ async function DashboardContent() {
                 </Link>
 
                 <Link
+                  href="/admin/coupons"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                >
+                  <FiTag className="text-base" />
+                  Coupons & Promos
+                  <FiArrowRight className="text-base" />
+                </Link>
+
+                <Link
                   href="/shop"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -310,7 +325,7 @@ async function DashboardContent() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
               <MetricCard
                 title="Total Revenue"
                 value={formatPrice(paidRevenue)}
@@ -337,6 +352,13 @@ async function DashboardContent() {
                 value={String(customerCount)}
                 description="Customers who have ordered"
                 icon={FiUsers}
+              />
+
+              <MetricCard
+                title="Active Coupons"
+                value={String(activeCoupons)}
+                description="Live promotion discounts"
+                icon={FiTag}
               />
             </div>
           </section>
@@ -447,6 +469,24 @@ async function DashboardContent() {
                     </span>
                     <span className="mt-0.5 block text-xs text-neutral-500">
                       Track and process customer orders
+                    </span>
+                  </span>
+                  <FiArrowRight className="text-neutral-400 transition group-hover:translate-x-1 group-hover:text-[#d71920]" />
+                </Link>
+
+                <Link
+                  href="/admin/coupons"
+                  className="group flex items-center gap-3 rounded-xl border border-neutral-200 p-4 transition hover:border-red-200 hover:bg-red-50/50"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-[#d71920]">
+                    <FiTag className="text-lg" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-bold text-neutral-800">
+                      Coupons & Discounts
+                    </span>
+                    <span className="mt-0.5 block text-xs text-neutral-500">
+                      Create, track, and manage promo codes
                     </span>
                   </span>
                   <FiArrowRight className="text-neutral-400 transition group-hover:translate-x-1 group-hover:text-[#d71920]" />

@@ -50,6 +50,8 @@ type Order = {
   }>;
   subtotal: number;
   shippingCharge: number;
+  couponCode?: string;
+  discountAmount?: number;
   total: number;
   paymentMethod: "cod" | "online";
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
@@ -451,6 +453,11 @@ export default function AdminOrdersPage() {
                         <p className="mt-2 text-xl font-extrabold text-gray-950">
                           {formatPrice(order.total)}
                         </p>
+                        {order.couponCode && (order.discountAmount ?? 0) > 0 ? (
+                          <p className="mt-1 text-xs font-bold text-emerald-600">
+                            Coupon {order.couponCode}: -{formatPrice(order.discountAmount || 0)}
+                          </p>
+                        ) : null}
                         <p className="mt-1 text-xs text-gray-500">
                           Shipping: {formatPrice(order.shippingCharge)}
                         </p>

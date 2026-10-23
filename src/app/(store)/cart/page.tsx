@@ -40,11 +40,13 @@ export default function CartPage() {
   const [ready, setReady] = useState(false);
   const [storageError, setStorageError] = useState(false);
 
-  // Promo code test in cart
+  // Promo code in cart
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<{
     code: string;
-    discountPercent: number;
+    discountType: "percentage" | "flat";
+    discountValue: number;
+    discountAmount: number;
   } | null>(null);
   const [promoMessage, setPromoMessage] = useState<{
     type: "success" | "error";
@@ -96,24 +98,47 @@ export default function CartPage() {
     }
   }
 
-  function handleApplyPromo(e: React.FormEvent) {
+  const subtotal = getCartSubtotal(items);
+
+  async function handleApplyPromo(e: React.FormEvent) {
     e.preventDefault();
     setPromoMessage(null);
     const cleaned = promoInput.trim().toUpperCase();
 
     if (!cleaned) return;
 
-    if (cleaned === "BIAX10" || cleaned === "IMPACT10" || cleaned === "WELCOME10") {
-      setAppliedPromo({ code: cleaned, discountPercent: 10 });
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: cleaned, subtotal }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.valid) {
+        setPromoMessage({
+          type: "error",
+          text: data.message || "Invalid or expired promo code.",
+        });
+        return;
+      }
+
+      setAppliedPromo({
+        code: data.coupon.code,
+        discountType: data.coupon.discountType,
+        discountValue: data.coupon.discountValue,
+        discountAmount: data.coupon.discountAmount,
+      });
+
       setPromoMessage({
         type: "success",
-        text: `Code '${cleaned}' applied! 10% discount subtracted.`,
+        text: data.message || `Code '${data.coupon.code}' applied!`,
       });
       setPromoInput("");
-    } else {
+    } catch {
       setPromoMessage({
         type: "error",
-        text: "Invalid promo code. Try 'BIAX10' for 10% off.",
+        text: "Could not apply coupon. Please check connection.",
       });
     }
   }
@@ -123,10 +148,7 @@ export default function CartPage() {
     setPromoMessage(null);
   }
 
-  const subtotal = getCartSubtotal(items);
-  const discountAmount = appliedPromo
-    ? Math.round((subtotal * appliedPromo.discountPercent) / 100)
-    : 0;
+  const discountAmount = appliedPromo?.discountAmount ?? 0;
   const total = Math.max(0, subtotal - discountAmount);
   const totalQuantity = items.reduce((totalCount, item) => totalCount + item.quantity, 0);
 

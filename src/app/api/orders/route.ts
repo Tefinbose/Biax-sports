@@ -7,6 +7,7 @@ import { z } from "zod";
 import { connectToDatabase } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import Order from "@/models/Order";
+import Coupon from "@/models/Coupon";
 
 const checkoutSchema = z.object({
   customer: z.object({
@@ -39,6 +40,7 @@ const checkoutSchema = z.object({
 
   paymentMethod: z.enum(["cod", "online"]),
   customerNotes: z.string().trim().max(1000).optional().default(""),
+  couponCode: z.string().trim().max(32).optional().default(""),
 });
 
 type CheckoutData = z.infer<typeof checkoutSchema>;
@@ -192,9 +194,51 @@ export async function POST(request: Request) {
         }
       }
 
+      // Validate and apply coupon if provided
+      let discountAmount = 0;
+      let appliedCouponCode = "";
+
+      if (data.couponCode && data.couponCode.trim()) {
+        const candidateCode = data.couponCode.trim().toUpperCase();
+        const coupon = await Coupon.findOne({
+          code: candidateCode,
+          active: true,
+        }).session(session!);
+
+        if (coupon) {
+          const now = new Date();
+          const isDateValid =
+            (!coupon.startDate || new Date(coupon.startDate) <= now) &&
+            (!coupon.endDate || new Date(coupon.endDate) >= now);
+          const isUsageValid =
+            !coupon.usageLimit || coupon.usedCount < coupon.usageLimit;
+          const isMinOrderValid =
+            !coupon.minOrderValue || subtotal >= coupon.minOrderValue;
+
+          if (isDateValid && isUsageValid && isMinOrderValid) {
+            appliedCouponCode = coupon.code;
+            if (coupon.discountType === "percentage") {
+              const rawDiscount = Math.round((subtotal * coupon.discountValue) / 100);
+              discountAmount = coupon.maxDiscountAmount
+                ? Math.min(rawDiscount, coupon.maxDiscountAmount)
+                : rawDiscount;
+            } else {
+              discountAmount = Math.min(subtotal, Math.round(coupon.discountValue));
+            }
+
+            // Increment coupon usage count
+            await Coupon.findByIdAndUpdate(
+              coupon._id,
+              { $inc: { usedCount: 1 } },
+              { session: session! },
+            );
+          }
+        }
+      }
+
       // Shipping is temporarily free. Configure actual delivery charges later.
       const shippingCharge = 0;
-      const total = roundMoney(subtotal + shippingCharge);
+      const total = Math.max(0, roundMoney(subtotal - discountAmount + shippingCharge));
       const orderNumber = makeOrderNumber();
 
       const [order] = await Order.create(
@@ -206,6 +250,8 @@ export async function POST(request: Request) {
             items: orderItems,
             subtotal,
             shippingCharge,
+            couponCode: appliedCouponCode,
+            discountAmount,
             total,
             paymentMethod: data.paymentMethod,
             paymentStatus: "pending",

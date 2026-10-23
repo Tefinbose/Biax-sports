@@ -123,6 +123,18 @@ const orderSchema = new Schema(
       min: 0,
       default: 0,
     },
+    couponCode: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      default: "",
+    },
+    discountAmount: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
     total: {
       type: Number,
       required: true,

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Mail, Tag } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Check, Mail, Tag } from "lucide-react";
 
 const perks = [
   "Early access to new drops",
@@ -14,14 +15,15 @@ export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
 
     setLoading(true);
-    // Simulate async submission (hook up real endpoint later)
-    await new Promise((r) => setTimeout(r, 900));
+    // Simulate async lead capture
+    await new Promise((r) => setTimeout(r, 600));
     setLoading(false);
     setStatus("success");
     setEmail("");
@@ -76,24 +78,67 @@ export default function NewsletterSignup() {
           {/* Right: Form */}
           <div className="rounded-2xl border border-white/10 bg-white/5 p-7 backdrop-blur-sm sm:p-10">
             {status === "success" ? (
-              <div className="flex flex-col items-center justify-center gap-4 py-8 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 ring-2 ring-primary/40">
-                  <Mail size={28} className="text-primary" />
+              <div className="flex flex-col items-center justify-center gap-4 py-6 text-center animate-in fade-in zoom-in-95 duration-200">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/20 ring-2 ring-primary/40 text-primary">
+                  <Mail size={24} />
                 </div>
-                <h3 className="text-xl font-black uppercase tracking-tight">
-                  You&apos;re in!
-                </h3>
-                <p className="max-w-xs text-sm leading-6 text-neutral-400">
-                  Welcome to the BIAX family. Check your inbox for a welcome
-                  discount.
+
+                <div>
+                  <h3 className="text-xl font-black uppercase tracking-tight text-white">
+                    You&apos;re on the list!
+                  </h3>
+                  <p className="mt-1 max-w-xs text-xs text-neutral-400 sm:text-sm">
+                    Here is your exclusive 10% welcome discount code:
+                  </p>
+                </div>
+
+                {/* THE COUPON CODE CARD */}
+                <div className="flex items-center gap-2 rounded-2xl border-2 border-dashed border-primary bg-primary/10 px-5 py-3 shadow-lg shadow-primary/10">
+                  <span className="font-mono text-xl font-black tracking-widest text-primary">
+                    BIAX10
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText("BIAX10");
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2500);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-black uppercase tracking-wider text-white hover:bg-[#b51219] transition active:scale-95 shadow-sm"
+                  >
+                    {copied ? (
+                      <>
+                        <Check size={14} strokeWidth={3} />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <span>Copy Code</span>
+                    )}
+                  </button>
+                </div>
+
+                <p className="text-xs text-neutral-400">
+                  Use this at <span className="font-bold text-white">Cart</span> or{" "}
+                  <span className="font-bold text-white">Checkout</span> for 10% off your order!
                 </p>
-                <button
-                  type="button"
-                  onClick={() => setStatus("idle")}
-                  className="mt-2 text-xs font-bold uppercase tracking-wider text-neutral-500 underline hover:text-white"
-                >
-                  Subscribe another email
-                </button>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                  <Link
+                    href="/shop"
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-black uppercase tracking-wider text-neutral-950 hover:bg-neutral-200 transition shadow-sm"
+                  >
+                    Start Shopping Now
+                    <ArrowRight size={14} strokeWidth={2.5} />
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => setStatus("idle")}
+                    className="text-xs font-semibold text-neutral-500 hover:text-white transition"
+                  >
+                    Subscribe another email
+                  </button>
+                </div>
               </div>
             ) : (
               <>

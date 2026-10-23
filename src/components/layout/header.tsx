@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, ShoppingBag, X } from "lucide-react";
+import { TbBolt } from "react-icons/tb";
+import { GiKimono, GiBoxingGlove } from "react-icons/gi";
 import { readCart, type CartItem } from "@/lib/cart";
 
 const navigation = [
@@ -180,27 +182,30 @@ export default function Header() {
           >
             <div className="mx-auto flex max-w-xl flex-col">
               {/* Quick Category Badges */}
-              <div className="mb-4 flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+              <div className="mb-4 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
                 <Link
                   href="/categories/sportswear"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-950 hover:text-white transition"
+                  className="group inline-flex shrink-0 items-center gap-1.5 rounded-full bg-neutral-100 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 transition hover:bg-neutral-950 hover:text-white active:scale-95"
                 >
-                  ⚡ Sportswear
+                  <TbBolt className="text-amber-500 transition-colors group-hover:text-amber-400" size={14} />
+                  <span>Sportswear</span>
                 </Link>
                 <Link
                   href="/categories/martial-arts-uniforms"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-950 hover:text-white transition"
+                  className="group inline-flex shrink-0 items-center gap-1.5 rounded-full bg-neutral-100 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 transition hover:bg-neutral-950 hover:text-white active:scale-95"
                 >
-                  🥋 Martial Arts
+                  <GiKimono className="text-[#d71920] transition-colors group-hover:text-white" size={14} />
+                  <span>Martial Arts</span>
                 </Link>
                 <Link
                   href="/categories/sports-equipment"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-950 hover:text-white transition"
+                  className="group inline-flex shrink-0 items-center gap-1.5 rounded-full bg-neutral-100 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 transition hover:bg-neutral-950 hover:text-white active:scale-95"
                 >
-                  🥊 Equipment
+                  <GiBoxingGlove className="text-red-500 transition-colors group-hover:text-white" size={14} />
+                  <span>Equipment</span>
                 </Link>
               </div>
 

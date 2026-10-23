@@ -8,6 +8,7 @@ import {
   FiPackage,
   FiShoppingCart,
   FiUsers,
+  FiTag,
   FiBarChart2,
   FiSettings,
   FiLogOut,
@@ -37,6 +38,11 @@ const navigation = [
     label: "Customers",
     href: "/admin/customers",
     icon: FiUsers,
+  },
+  {
+    label: "Coupons",
+    href: "/admin/coupons",
+    icon: FiTag,
   },
   {
     label: "Analytics",

@@ -171,7 +171,16 @@ export default function Footer() {
           <p>
             © {currentYear} {siteConfig.legalName}. All rights reserved.
           </p>
-          <p>Made for athletes. Built for impact.</p>
+          <div className="flex items-center gap-4">
+            <p>Made for athletes. Built for impact.</p>
+            <span className="text-neutral-700">·</span>
+            <Link
+              href="/admin/login"
+              className="text-neutral-500 hover:text-neutral-300 transition-colors"
+            >
+              Admin Portal
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
