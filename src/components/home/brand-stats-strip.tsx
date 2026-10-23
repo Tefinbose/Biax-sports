@@ -1,44 +1,45 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ShieldCheck, Star, Truck, Users } from "lucide-react";
 
-interface Stat {
-  icon: React.ReactNode;
-  value: string;
-  suffix?: string;
-  label: string;
+interface StatItem {
+  index: string;
   target: number;
+  suffix: string;
+  isRating?: boolean;
+  title: string;
+  sub: string;
 }
 
-const stats: Stat[] = [
+const stats: StatItem[] = [
   {
-    icon: <Users size={22} strokeWidth={2.5} />,
-    value: "0",
-    suffix: "+",
-    label: "Athletes Equipped",
+    index: "01",
     target: 5000,
-  },
-  {
-    icon: <Star size={22} strokeWidth={2.5} className="fill-amber-400 text-amber-400" />,
-    value: "0",
-    suffix: "/5",
-    label: "Average Rating",
-    target: 49,
-  },
-  {
-    icon: <ShieldCheck size={22} strokeWidth={2.5} />,
-    value: "0",
     suffix: "+",
-    label: "Products Available",
-    target: 120,
+    title: "Athletes Equipped",
+    sub: "Across 28 States & Clubs",
   },
   {
-    icon: <Truck size={22} strokeWidth={2.5} />,
-    value: "0",
-    suffix: "",
-    label: "Pan-India Shipping",
+    index: "02",
+    target: 49,
+    suffix: "/5",
+    isRating: true,
+    title: "Tournament Rating",
+    sub: "Tested under competition",
+  },
+  {
+    index: "03",
+    target: 120,
+    suffix: "+",
+    title: "Performance Designs",
+    sub: "Gis, Sportswear & Kits",
+  },
+  {
+    index: "04",
     target: 100,
+    suffix: "%",
+    title: "Pan-India Logistics",
+    sub: "Direct from Kerala Hub",
   },
 ];
 
@@ -58,7 +59,7 @@ function AnimatedCounter({
 
   useEffect(() => {
     if (!started) return;
-    const duration = 1800;
+    const duration = 1600;
     const startTime = performance.now();
 
     function tick(now: number) {
@@ -79,20 +80,22 @@ function AnimatedCounter({
   if (isRating) {
     const display = (count / 10).toFixed(1);
     return (
-      <span>
+      <span className="tabular-nums">
         {display}
-        {suffix}
+        <span className="text-neutral-400 font-semibold text-base sm:text-lg">/5</span>
       </span>
     );
   }
 
-  const display =
-    target >= 1000 ? `${Math.round(count / 100) / 10}K` : `${count}%`;
+  const formatted =
+    target >= 1000
+      ? count.toLocaleString("en-IN")
+      : count.toString();
 
   return (
-    <span>
-      {target >= 100 && target < 1000 ? count + suffix : display}
-      {target >= 1000 ? suffix : ""}
+    <span className="tabular-nums">
+      {formatted}
+      <span className="text-primary font-black ml-0.5">{suffix}</span>
     </span>
   );
 }
@@ -111,44 +114,63 @@ export default function BrandStatsStrip() {
           obs.disconnect();
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.25 },
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
   return (
-    <div
+    <section
       ref={ref}
-      className="relative z-10 border-y border-neutral-200/80 bg-white"
+      aria-label="Brand credentials and impact"
+      className="relative z-10 border-b border-neutral-200/90 bg-[#fafafa]"
     >
-      <div className="mx-auto grid max-w-[1440px] grid-cols-2 md:grid-cols-4">
-        {stats.map((stat, i) => (
-          <div
-            key={i}
-            className={`group flex flex-col items-center justify-center gap-1.5 px-3 py-5 text-center transition-colors duration-300 hover:bg-neutral-50 sm:gap-2.5 sm:px-6 sm:py-10 ${
-              i % 2 === 0 ? "border-r border-neutral-200/80" : ""
-            } ${i < 2 ? "border-b border-neutral-200/80 md:border-b-0" : ""} ${
-              i > 0 ? "md:border-l md:border-neutral-200/80" : ""
-            }`}
-          >
-            <span className="text-primary transition-transform duration-300 group-hover:scale-110">
-              {stat.icon}
-            </span>
-            <p className="text-2xl font-black tracking-tight text-neutral-950 sm:text-4xl">
-              <AnimatedCounter
-                target={stat.target}
-                suffix={stat.suffix ?? ""}
-                isRating={i === 1}
-                started={started}
-              />
-            </p>
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500 sm:text-xs">
-              {stat.label}
-            </p>
-          </div>
-        ))}
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid grid-cols-2 divide-y divide-neutral-200/80 sm:grid-cols-2 md:grid-cols-4 md:divide-y-0 md:divide-x">
+          {stats.map((item, i) => (
+            <div
+              key={item.index}
+              className={`group relative flex flex-col justify-between p-5 sm:p-7 lg:p-9 transition-colors duration-300 hover:bg-white ${
+                i % 2 === 1 ? "border-l border-neutral-200/80 md:border-l-0" : ""
+              }`}
+            >
+              {/* Subtle athletic red accent line on hover */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+
+              {/* Header: Editorial Index Label (No cheesy icons) */}
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-400">
+                  // {item.index}
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-neutral-300 transition-colors duration-300 group-hover:bg-primary" />
+              </div>
+
+              {/* Number Stat */}
+              <div className="my-auto">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-neutral-950 font-sans">
+                  <AnimatedCounter
+                    target={item.target}
+                    suffix={item.suffix}
+                    isRating={item.isRating}
+                    started={started}
+                  />
+                </div>
+
+                {/* Primary Metric Name */}
+                <h3 className="mt-1.5 sm:mt-2 text-xs sm:text-sm font-black uppercase tracking-tight text-neutral-900">
+                  {item.title}
+                </h3>
+              </div>
+
+              {/* Editorial Context Subtitle */}
+              <p className="mt-2 text-[10px] sm:text-xs text-neutral-500 font-medium leading-tight">
+                {item.sub}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
