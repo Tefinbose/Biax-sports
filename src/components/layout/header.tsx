@@ -69,10 +69,49 @@ export default function Header() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const copyCode = (code: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2000);
+    }
+  };
+
+  const announcementItems = [
+    { text: "BIAX SPORTS — Built for Impact" },
+    { text: "WELCOME OFFER: FLAT ₹500 OFF", code: "WELCOME500" },
+    { text: "GET 10% OFF YOUR FIRST ORDER", code: "BIAX10" },
+    { text: "FREE PAN-INDIA DELIVERY ON PREPAID ORDERS" },
+    { text: "7-DAY ZERO-RISK EXCHANGES" },
+  ];
+
   return (
     <header className="sticky top-0 z-50">
-      <div className="bg-neutral-950 px-4 py-2 text-center text-[10px] font-bold uppercase tracking-[0.25em] text-white sm:text-xs">
-        BIAX SPORTS — Built for Impact
+      <div className="relative overflow-hidden bg-neutral-950 py-2 text-white border-b border-neutral-900 select-none">
+        <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center gap-6 sm:gap-8 text-[10px] font-bold uppercase tracking-[0.22em] sm:text-xs">
+          {[...announcementItems, ...announcementItems].map((item, idx) => (
+            <div key={idx} className="flex items-center gap-6 sm:gap-8 shrink-0">
+              <span className="flex items-center gap-2">
+                <span>{item.text}</span>
+                {item.code && (
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      copyCode(item.code!);
+                    }}
+                    title="Click to copy coupon code"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded bg-primary/25 px-2 py-0.5 font-mono text-[10px] sm:text-[11px] font-black tracking-wider text-primary border border-primary/40 transition-all hover:bg-primary hover:text-white"
+                  >
+                    {copiedCode === item.code ? "COPIED!" : item.code}
+                  </span>
+                )}
+              </span>
+              <span className="text-primary/70 font-black">✦</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div

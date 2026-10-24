@@ -76,7 +76,7 @@ export default function WhyChooseUs() {
         <div className="mb-6 sm:mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-neutral-100 pb-5">
           <div>
             <p className="text-[10px] font-mono font-bold uppercase tracking-[0.24em] text-primary sm:text-xs">
-              // The BIAX Commitment
+              The BIAX Commitment
             </p>
             <h2 className="mt-1 text-2xl font-black uppercase leading-tight tracking-tight text-neutral-950 sm:text-4xl lg:text-5xl">
               Why Athletes{" "}
@@ -118,7 +118,7 @@ export default function WhyChooseUs() {
                 {/* Micro Header */}
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">
-                    {pillar.index} // {pillar.tag}
+                    {pillar.tag}
                   </span>
                   <span className="h-1.5 w-1.5 rounded-full bg-neutral-300 group-hover:bg-primary transition-colors" />
                 </div>

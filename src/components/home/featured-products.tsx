@@ -387,34 +387,34 @@ export default function FeaturedProducts({
         </div>
 
         {/* SUBTLE TRUST BANNER STRIP */}
-        <div className="mt-8 rounded-2xl border border-neutral-100 bg-[#f8f9fa] px-6 py-3.5 sm:py-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-neutral-200/80 gap-3 sm:gap-0">
+        <div className="mt-8 rounded-2xl border border-neutral-100 bg-[#f8f9fa] px-3 sm:px-6 py-3.5 sm:py-4">
+          <div className="grid grid-cols-2 divide-x divide-neutral-200/80">
             {/* Free shipping */}
-            <div className="flex items-center justify-center gap-3.5 sm:px-6">
+            <div className="flex items-center justify-center gap-2 sm:gap-3.5 px-2 sm:px-6">
               <Truck
-                size={26}
+                size={22}
                 strokeWidth={1.75}
-                className="text-neutral-700 shrink-0"
+                className="text-neutral-700 shrink-0 sm:w-6 sm:h-6"
               />
-              <div>
-                <p className="text-xs sm:text-sm font-bold text-neutral-900 leading-tight">
+              <div className="min-w-0">
+                <p className="text-[11px] sm:text-sm font-bold text-neutral-900 leading-tight">
                   Free shipping across India
                 </p>
-                <p className="text-[11px] text-neutral-500 leading-tight mt-0.5">
+                <p className="text-[9px] sm:text-[11px] text-neutral-500 leading-tight mt-0.5">
                   on qualifying orders
                 </p>
               </div>
             </div>
 
             {/* Size exchanges */}
-            <div className="flex items-center justify-center gap-3.5 pt-3 sm:pt-0 sm:px-6">
+            <div className="flex items-center justify-center gap-2 sm:gap-3.5 px-2 sm:px-6">
               <RotateCcw
-                size={24}
+                size={20}
                 strokeWidth={1.75}
-                className="text-neutral-700 shrink-0"
+                className="text-neutral-700 shrink-0 sm:w-6 sm:h-6"
               />
-              <div>
-                <p className="text-xs sm:text-sm font-bold text-neutral-900 leading-tight">
+              <div className="min-w-0">
+                <p className="text-[11px] sm:text-sm font-bold text-neutral-900 leading-tight">
                   Easy 7-day size exchanges
                 </p>
               </div>

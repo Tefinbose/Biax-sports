@@ -130,10 +130,7 @@ export default function FindYourFit({ categories }: FindYourFitProps) {
         {/* SECTION HEADER */}
         <div className="mb-6 sm:mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.24em] text-primary sm:text-xs">
-              // Disciplines & Collections
-            </p>
-            <h2 className="mt-1 text-3xl font-black uppercase leading-[0.92] tracking-[-0.05em] text-neutral-950 sm:text-5xl lg:text-6xl">
+            <h2 className="text-3xl font-black uppercase leading-[0.92] tracking-[-0.05em] text-neutral-950 sm:text-5xl lg:text-6xl">
               Find your{" "}
               <span className="text-primary">
                 fit

@@ -89,7 +89,7 @@ function AnimatedCounter({
     return (
       <span className="tabular-nums">
         {display}
-        <span className="text-neutral-400 font-semibold text-xs sm:text-base">/5</span>
+        <span className="text-neutral-400 font-semibold text-[9px] sm:text-xs md:text-base">/5</span>
       </span>
     );
   }
@@ -134,32 +134,27 @@ export default function BrandStatsStrip() {
       className="relative z-10 border-b border-neutral-200/90 bg-[#fafafa]"
     >
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid grid-cols-2 divide-y divide-neutral-200/80 sm:grid-cols-2 md:grid-cols-4 md:divide-y-0 md:divide-x">
-          {stats.map((item, i) => {
+        <div className="grid grid-cols-4 divide-x divide-neutral-200/80">
+          {stats.map((item) => {
             const Icon = item.icon;
             return (
               <div
                 key={item.index}
-                className={`group relative flex flex-col justify-between p-3.5 sm:p-6 lg:p-8 transition-colors duration-300 hover:bg-white ${
-                  i % 2 === 1 ? "border-l border-neutral-200/80 md:border-l-0" : ""
-                }`}
+                className="group relative flex flex-col justify-between p-2.5 sm:p-5 lg:p-8 transition-colors duration-300 hover:bg-white min-w-0"
               >
                 {/* Subtle athletic red accent line on hover */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
-                {/* Header: Icon + Index label */}
-                <div className="flex items-center justify-between mb-2.5 sm:mb-4">
-                  <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-red-50 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
-                    <Icon className="text-xs sm:text-base" />
+                {/* Header: Icon */}
+                <div className="mb-2 sm:mb-3 lg:mb-4">
+                  <div className="flex h-6 w-6 sm:h-8 sm:w-8 lg:h-9 lg:w-9 items-center justify-center rounded-lg bg-red-50 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                    <Icon className="text-[11px] sm:text-sm lg:text-base" />
                   </div>
-                  <span className="hidden sm:inline font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-400">
-                    // {item.index}
-                  </span>
                 </div>
 
                 {/* Number Stat */}
                 <div>
-                  <div className="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-neutral-950 font-sans leading-none sm:leading-tight">
+                  <div className="text-sm sm:text-xl md:text-2xl lg:text-3xl font-black tracking-tight text-neutral-950 font-sans leading-none sm:leading-tight">
                     <AnimatedCounter
                       target={item.target}
                       suffix={item.suffix}
@@ -169,13 +164,13 @@ export default function BrandStatsStrip() {
                   </div>
 
                   {/* Primary Metric Name */}
-                  <h3 className="mt-1 text-[11px] sm:text-xs md:text-sm font-black uppercase tracking-tight text-neutral-900 leading-tight">
+                  <h3 className="mt-1 text-[9px] sm:text-xs md:text-sm font-black uppercase tracking-tight text-neutral-900 leading-tight">
                     {item.title}
                   </h3>
                 </div>
 
                 {/* Context Subtitle */}
-                <p className="mt-1 text-[9px] sm:text-[11px] text-neutral-500 font-medium leading-tight">
+                <p className="mt-1 text-[8px] sm:text-[10px] lg:text-[11px] text-neutral-500 font-medium leading-tight">
                   {item.sub}
                 </p>
               </div>

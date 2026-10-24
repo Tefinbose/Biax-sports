@@ -13,9 +13,9 @@ import { siteConfig } from "@/config/site";
 import FindYourFit from "@/components/home/find-your-fit";
 import FeaturedProducts from "@/components/home/featured-products";
 import WhyChooseUs from "@/components/home/why-choose-us";
-import NewsletterSignup from "@/components/home/newsletter-signup";
 import MindsetSection from "@/components/home/mindset-section";
 import BrandStatsStrip from "@/components/home/brand-stats-strip";
+import NewArrivalsBanner from "@/components/home/new-arrivals-banner";
 import { connectToDatabase } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import type { StoreProduct } from "@/components/products/product-card";
@@ -200,6 +200,9 @@ export default function HomePage() {
       {/* FIND YOUR FIT ACCORDION */}
       <FindYourFit categories={siteConfig.categories} />
 
+      {/* NEW ARRIVALS CAMPAIGN BANNER */}
+      <NewArrivalsBanner />
+
       {/* FEATURED & BEST-SELLING PRODUCTS */}
       <Suspense fallback={<FeaturedProducts products={[]} />}>
         <FeaturedProductsSection />
@@ -210,9 +213,6 @@ export default function HomePage() {
 
       {/* WHY CHOOSE US */}
       <WhyChooseUs />
-
-      {/* NEWSLETTER */}
-      <NewsletterSignup />
 
       {/* TRUST SIGNALS BAR */}
       <div className="border-t border-neutral-200/70 bg-neutral-50/90">
