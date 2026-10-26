@@ -19,7 +19,7 @@ const faqs: FAQItem[] = [
     categoryLabel: "Sizing & Fit",
     question: "How do I choose the right size for BIAX Gis and fightwear?",
     answer:
-      "All BIAX Gis, rashguards, and combat shorts are tailored according to athletic combat standards with Indian body ergonomics in mind. Every product page contains a detailed height, weight, and chest size chart. If you are between sizes, we generally recommend sizing up for Gis (to account for natural cotton weave settling) or sizing down for compression rashguards for a snug second-skin feel. Plus, our 7-Day Zero-Risk Exchange ensures you can easily swap if the fit isn't perfect.",
+      "All BIAX Gis, rashguards, and combat shorts are tailored according to athletic combat standards with Indian body ergonomics in mind. Every product page contains a detailed height, weight, and chest size chart. If you are between sizes, we generally recommend sizing up for Gis (to account for natural cotton weave settling) or sizing down for compression rashguards for a snug second-skin feel. Plus, our 7-Day Size Exchange on eligible apparel ensures you can easily swap if the fit isn't perfect.",
   },
   {
     id: "faq-2",
@@ -41,9 +41,9 @@ const faqs: FAQItem[] = [
     id: "faq-4",
     category: "orders",
     categoryLabel: "Exchanges & Returns",
-    question: "How does the 7-Day Zero-Risk Exchange policy work?",
+    question: "How does the 7-Day Size Exchange policy work?",
     answer:
-      "If your gear arrives and the fit or feel isn't exactly right, you can initiate an exchange within 7 days of delivery. Items must be unwashed, unworn in competition, and have original tags intact. We arrange a convenient doorstep reverse pickup right from your address across India, and dispatch your replacement size as soon as pickup is confirmed.",
+      "For eligible apparel and martial arts uniforms (Gis, rashguards, fightwear), you can initiate a size exchange within 7 days of delivery if the fit isn't right. Items must be unwashed, unworn, and have original tags intact. We arrange a doorstep reverse pickup across India and dispatch your replacement size once pickup is verified. Non-apparel equipment and accessories follow our standard quality defect warranty.",
   },
   {
     id: "faq-5",

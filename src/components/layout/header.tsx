@@ -84,7 +84,7 @@ export default function Header() {
     { text: "WELCOME OFFER: FLAT ₹500 OFF", code: "WELCOME500" },
     { text: "GET 10% OFF YOUR FIRST ORDER", code: "BIAX10" },
     { text: "FREE PAN-INDIA DELIVERY ON PREPAID ORDERS" },
-    { text: "7-DAY ZERO-RISK EXCHANGES" },
+    { text: "7-DAY EASY SIZE EXCHANGES" },
   ];
 
   return (

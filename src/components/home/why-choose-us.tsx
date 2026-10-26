@@ -23,11 +23,11 @@ const pillars: PromisePillar[] = [
   },
   {
     index: "02",
-    tag: "FIT ASSURANCE",
-    title: "7-Day Zero-Risk Exchanges",
+    tag: "PERFORMANCE DESIGN",
+    title: "Built For Intense Training",
     description:
-      "Wrong size? Exchange your items with doorstep reverse pickup within 7 days. Never compromise on comfort, reach, or combat range.",
-    highlight: "Doorstep Pickup Across India",
+      "Designed for demanding training sessions, our martial arts uniforms and sportswear combine durable construction, comfortable fabrics, and freedom of movement.",
+    highlight: "Performance Without Compromise",
   },
   {
     index: "03",
