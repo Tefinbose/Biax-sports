@@ -142,9 +142,6 @@ export default function BrandStatsStrip() {
                 key={item.index}
                 className="group relative flex flex-col justify-between p-2.5 sm:p-5 lg:p-8 transition-colors duration-300 hover:bg-white min-w-0"
               >
-                {/* Subtle athletic red accent line on hover */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-
                 {/* Header: Icon */}
                 <div className="mb-2 sm:mb-3 lg:mb-4">
                   <div className="flex h-6 w-6 sm:h-8 sm:w-8 lg:h-9 lg:w-9 items-center justify-center rounded-lg bg-red-50 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">

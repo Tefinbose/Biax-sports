@@ -111,16 +111,12 @@ export default function WhyChooseUs() {
               key={pillar.index}
               className="group relative flex w-[84vw] shrink-0 snap-center flex-col justify-between rounded-2xl border border-neutral-200/90 bg-[#fafafa] p-5 sm:w-auto sm:p-6 transition-all duration-300 hover:border-neutral-950 hover:bg-white hover:shadow-lg hover:shadow-black/5"
             >
-              {/* Red hairline indicator */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-
               <div>
                 {/* Micro Header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4">
                   <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">
                     {pillar.tag}
                   </span>
-                  <span className="h-1.5 w-1.5 rounded-full bg-neutral-300 group-hover:bg-primary transition-colors" />
                 </div>
 
                 {/* Title */}

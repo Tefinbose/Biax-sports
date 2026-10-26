@@ -187,7 +187,7 @@ export default function ContactForm() {
             >
               <option value="general">General Inquiries</option>
               <option value="orders">Order Status & Tracking</option>
-              <option value="academy">Martial Arts Academy / Dojo Orders</option>
+              <option value="academy">Martial Arts Academy Orders</option>
               <option value="bulk">Bulk Sportswear & Equipment</option>
               <option value="wholesale">Distributor & Wholesale</option>
               <option value="exchange">Size Exchange & Support</option>
