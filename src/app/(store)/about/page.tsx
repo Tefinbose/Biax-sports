@@ -138,9 +138,9 @@ export default function AboutPage() {
           </div>
 
           <h1 className="mt-6 text-2xl font-black uppercase leading-[1.08] tracking-tight sm:text-4xl lg:text-5xl">
-            Built for{" "}
+            Built to{" "}
             <span className="text-transparent [-webkit-text-stroke:1.2px_#ffffff] sm:[-webkit-text-stroke:1.8px_#ffffff]">
-              impact.
+              perform.
             </span>
             <br />
             Driven by{" "}
@@ -172,27 +172,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* METRICS / STATS CONSOLE */}
+      {/* METRICS / STATS */}
       <section
         aria-label="Key brand metrics and heritage"
         className="relative z-10 border-b border-neutral-200/90 bg-[#f7f7f5] px-5 py-8 sm:px-8 sm:py-12 lg:px-12"
       >
         <div className="mx-auto max-w-[1440px]">
-          {/* Eyebrow Label */}
-          <div className="mb-3.5 flex items-center justify-between">
-            <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-500">
-              // Telemetry & Milestones
-            </span>
-            <span className="hidden font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-400 sm:inline">
-              Built for Indian Athletes
-            </span>
-          </div>
-
           {/* Unified Architectural Console Deck */}
           <div className="overflow-hidden rounded-3xl border border-neutral-200/90 bg-white shadow-xl shadow-neutral-900/5">
             <div className="grid grid-cols-2 divide-y divide-neutral-200/80 sm:grid-cols-2 lg:grid-cols-4 lg:divide-y-0 lg:divide-x">
               {milestones.map((item, idx) => {
-                const Icon = item.icon;
                 const isEvenColMobile = idx % 2 === 1;
 
                 return (
@@ -205,18 +194,8 @@ export default function AboutPage() {
                     {/* Athletic red accent line that animates on hover */}
                     <div className="absolute inset-x-0 top-0 h-[3px] bg-[#d71920] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
-                    {/* Top Row: Tech index & Icon pill */}
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-neutral-400 group-hover:text-primary transition-colors">
-                        // {item.index}
-                      </span>
-                      <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700 transition-all duration-300 group-hover:bg-[#d71920] group-hover:text-white group-hover:scale-105">
-                        <Icon size={16} />
-                      </div>
-                    </div>
-
                     {/* Hero Metric Number / Text */}
-                    <div className="my-4 sm:my-5">
+                    <div className="my-2 sm:my-3">
                       <div className="text-2xl sm:text-3xl lg:text-[40px] font-black uppercase tracking-tight text-neutral-950 font-sans leading-none">
                         {item.value}
                       </div>

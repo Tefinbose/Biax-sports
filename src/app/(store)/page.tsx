@@ -75,12 +75,12 @@ export default function HomePage() {
             </p>
 
             <h1 className="text-[clamp(2.35rem,5.2vw,4.5rem)] font-black uppercase leading-[0.92] tracking-[-0.05em] xl:text-[clamp(2.8rem,5.8vw,5.25rem)]">
-              Built
+              BUILT
               <br />
-              for
+              TO
               <br />
               <span className="text-transparent [-webkit-text-stroke:1.5px_#ffffff] sm:[-webkit-text-stroke:2px_#ffffff]">
-                impact.
+                PERFORM
               </span>
             </h1>
 
