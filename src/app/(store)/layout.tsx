@@ -12,13 +12,13 @@ function HeaderFallback() {
             { text: "WELCOME OFFER: FLAT ₹500 OFF", code: "WELCOME500" },
             { text: "GET 10% OFF YOUR FIRST ORDER", code: "BIAX10" },
             { text: "FREE PAN-INDIA DELIVERY ON PREPAID ORDERS" },
-            { text: "7-DAY EASY SIZE EXCHANGES" },
+            { text: "BUILT FOR INTENSE TRAINING" },
           ].concat([
             { text: "BIAX SPORTS — Built for Impact" },
             { text: "WELCOME OFFER: FLAT ₹500 OFF", code: "WELCOME500" },
             { text: "GET 10% OFF YOUR FIRST ORDER", code: "BIAX10" },
             { text: "FREE PAN-INDIA DELIVERY ON PREPAID ORDERS" },
-            { text: "7-DAY EASY SIZE EXCHANGES" },
+            { text: "BUILT FOR INTENSE TRAINING" },
           ]).map((item, idx) => (
             <div key={idx} className="flex items-center gap-6 sm:gap-8 shrink-0">
               <span className="flex items-center gap-2">
@@ -29,7 +29,7 @@ function HeaderFallback() {
                   </span>
                 )}
               </span>
-              <span className="text-primary/70 font-black">✦</span>
+              <span className="text-neutral-500 font-bold">•</span>
             </div>
           ))}
         </div>

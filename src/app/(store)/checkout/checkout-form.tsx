@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowRight,
@@ -23,7 +24,6 @@ import {
   RefreshCw,
   ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Tag,
   Truck,
   User,
@@ -121,6 +121,7 @@ function formatPrice(amount: number) {
 }
 
 export default function CheckoutForm() {
+  const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartLoaded, setCartLoaded] = useState(false);
   const [form, setForm] = useState<CheckoutFormData>(initialForm);
@@ -146,8 +147,13 @@ export default function CheckoutForm() {
 
   useEffect(() => {
     const loadCart = () => {
-      setCart(readCart());
+      const items = readCart();
+      setCart(items);
       setCartLoaded(true);
+      // If user has items in cart, they are actively checking out; never show old order
+      if (items.length > 0) {
+        setCreatedOrder(null);
+      }
     };
 
     loadCart();
@@ -158,6 +164,7 @@ export default function CheckoutForm() {
     return () => {
       window.removeEventListener("storage", loadCart);
       window.removeEventListener("biax-cart-updated", loadCart);
+      setCreatedOrder(null);
     };
   }, []);
 
@@ -331,7 +338,19 @@ export default function CheckoutForm() {
       setCart([]);
       window.dispatchEvent(new Event("biax-cart-updated"));
 
-      setCreatedOrder(order);
+      // Clear local createdOrder state so /checkout is immediately clean for any future visit
+      setCreatedOrder(null);
+
+      // Route to dedicated confirmation page
+      const successUrl = `/checkout/success?orderNumber=${encodeURIComponent(
+        order.orderNumber,
+      )}&total=${order.total}&paymentMethod=${encodeURIComponent(
+        order.paymentMethod,
+      )}&paymentStatus=${encodeURIComponent(
+        order.paymentStatus,
+      )}&email=${encodeURIComponent(form.email.trim())}`;
+
+      router.push(successUrl);
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -355,8 +374,8 @@ export default function CheckoutForm() {
     );
   }
 
-  // 2. Order Confirmation Celebration Screen
-  if (createdOrder) {
+  // 2. Order Confirmation Celebration Screen (fallback if routing pending, only when cart is empty)
+  if (createdOrder && cart.length === 0) {
     return (
       <div className="mx-auto max-w-2xl rounded-3xl border border-neutral-200 bg-white p-6 shadow-xl sm:p-12">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-green-600 ring-8 ring-green-50/50">
@@ -437,6 +456,11 @@ export default function CheckoutForm() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/shop"
+            onClick={() => {
+              setCreatedOrder(null);
+              setForm(initialForm);
+              setAppliedPromo(null);
+            }}
             className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-primary/25 transition duration-300 hover:bg-primary-hover hover:-translate-y-0.5"
           >
             Continue Shopping
@@ -444,6 +468,11 @@ export default function CheckoutForm() {
           </Link>
           <Link
             href="/"
+            onClick={() => {
+              setCreatedOrder(null);
+              setForm(initialForm);
+              setAppliedPromo(null);
+            }}
             className="flex items-center justify-center rounded-full border border-neutral-200 bg-neutral-100 px-7 py-4 text-xs font-bold uppercase tracking-wider text-neutral-700 transition hover:bg-neutral-200 hover:text-neutral-950"
           >
             Back to Home

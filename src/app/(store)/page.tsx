@@ -5,7 +5,7 @@ import { connection } from "next/server";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import {
   TbTruckDelivery,
-  TbArrowsExchange,
+  TbFlame,
   TbTrophy,
   TbHeartHandshake,
 } from "react-icons/tb";
@@ -223,8 +223,8 @@ export default function HomePage() {
               text: "Free shipping across India",
             },
             {
-              icon: <TbArrowsExchange size={20} className="text-primary shrink-0" strokeWidth={2} />,
-              text: "7-day easy exchanges",
+              icon: <TbFlame size={20} className="text-primary shrink-0" strokeWidth={2} />,
+              text: "Built for intense training",
             },
             {
               icon: <TbTrophy size={19} className="text-primary shrink-0" strokeWidth={2} />,

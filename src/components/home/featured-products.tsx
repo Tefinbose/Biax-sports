@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Heart, RotateCcw, Star, Truck } from "lucide-react";
+import { ChevronRight, Flame, Heart, Star, Truck } from "lucide-react";
 import type { StoreProduct } from "@/components/products/product-card";
 import { isWishlisted, toggleWishlist } from "@/lib/wishlist";
 
@@ -406,16 +406,19 @@ export default function FeaturedProducts({
               </div>
             </div>
 
-            {/* Size exchanges */}
+            {/* Built for intense training */}
             <div className="flex items-center justify-center gap-2 sm:gap-3.5 px-2 sm:px-6">
-              <RotateCcw
+              <Flame
                 size={20}
                 strokeWidth={1.75}
                 className="text-neutral-700 shrink-0 sm:w-6 sm:h-6"
               />
               <div className="min-w-0">
                 <p className="text-[11px] sm:text-sm font-bold text-neutral-900 leading-tight">
-                  Easy 7-day size exchanges
+                  Built for intense training
+                </p>
+                <p className="text-[9px] sm:text-[11px] text-neutral-500 leading-tight mt-0.5">
+                  performance without compromise
                 </p>
               </div>
             </div>

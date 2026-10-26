@@ -84,7 +84,7 @@ export default function Header() {
     { text: "WELCOME OFFER: FLAT ₹500 OFF", code: "WELCOME500" },
     { text: "GET 10% OFF YOUR FIRST ORDER", code: "BIAX10" },
     { text: "FREE PAN-INDIA DELIVERY ON PREPAID ORDERS" },
-    { text: "7-DAY EASY SIZE EXCHANGES" },
+    { text: "BUILT FOR INTENSE TRAINING" },
   ];
 
   return (
@@ -108,7 +108,7 @@ export default function Header() {
                   </span>
                 )}
               </span>
-              <span className="text-primary/70 font-black">✦</span>
+              <span className="text-neutral-500 font-bold">•</span>
             </div>
           ))}
         </div>
