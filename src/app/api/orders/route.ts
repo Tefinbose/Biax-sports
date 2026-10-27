@@ -152,6 +152,10 @@ export async function POST(request: Request) {
           throw new Error("PRODUCT_UNAVAILABLE");
         }
 
+        if (product.isComingSoon) {
+          throw new Error("PRODUCT_COMING_SOON");
+        }
+
         if (product.stock < quantity) {
           throw new Error("INSUFFICIENT_STOCK");
         }
@@ -286,6 +290,19 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === "PRODUCT_COMING_SOON"
+    ) {
+      return NextResponse.json(
+        {
+          message:
+            "One or more products in your cart are Coming Soon and cannot be purchased yet.",
+        },
+        { status: 400 },
+      );
+    }
+
     if (
       error instanceof Error &&
       error.message === "PRODUCT_UNAVAILABLE"

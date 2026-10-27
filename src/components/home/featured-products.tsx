@@ -182,12 +182,40 @@ function FeatureProductCard({ product }: { product: StoreProduct }) {
               setImgSrc("/images/sports-equipments/pexels-mjrfilms-38593700.jpg")
             }
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            className={`object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+              product.isComingSoon || product.stock < 1
+                ? "blur-[1px] opacity-90"
+                : ""
+            }`}
           />
+
+          {/* Subtle Frosted Blur Overlay for Coming Soon */}
+          {product.isComingSoon && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/20 p-3 text-center backdrop-blur-[1px] transition duration-300">
+              <span className="rounded-full border border-amber-300/60 bg-amber-500 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black shadow-lg backdrop-blur-md">
+                Coming Soon
+              </span>
+              <span className="mt-1 font-mono text-[9px] font-bold uppercase tracking-wider text-white drop-shadow-md">
+                Launching Soon
+              </span>
+            </div>
+          )}
+
+          {/* Subtle Frosted Blur Overlay for Out of Stock */}
+          {!product.isComingSoon && product.stock < 1 && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/25 p-3 text-center backdrop-blur-[1px] transition duration-300">
+              <span className="rounded-full border border-white/20 bg-neutral-950/90 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-lg backdrop-blur-md">
+                Out of Stock
+              </span>
+              <span className="mt-1 font-mono text-[9px] font-bold uppercase tracking-wider text-neutral-300 drop-shadow-md">
+                Restocking Soon
+              </span>
+            </div>
+          )}
         </Link>
 
-        {/* Discount Badge (e.g. 18% OFF) */}
-        {discountPercent > 0 && (
+        {/* Discount Badge for in-stock live products */}
+        {!product.isComingSoon && product.stock >= 1 && discountPercent > 0 && (
           <span className="absolute left-2.5 top-2.5 z-10 rounded-md bg-[#ff3b30] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
             {discountPercent}% OFF
           </span>

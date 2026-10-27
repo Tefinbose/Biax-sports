@@ -78,7 +78,7 @@ async function ProductContent({ slug }: { slug: string }) {
       published: true,
     })
       .select(
-        "name slug description shortDescription category price compareAtPrice images sizes colors stock sku",
+        "name slug description shortDescription category price compareAtPrice images sizes colors stock sku isComingSoon",
       )
       .lean();
   } catch (error) {
@@ -139,6 +139,7 @@ async function ProductContent({ slug }: { slug: string }) {
     sizes: product.sizes ?? [],
     colors: product.colors ?? [],
     stock: product.stock,
+    isComingSoon: Boolean(product.isComingSoon),
   };
 
   return (
@@ -166,9 +167,23 @@ async function ProductContent({ slug }: { slug: string }) {
 
           {/* RIGHT: Scrollable Product Details */}
           <div className="custom-scrollbar border-t border-neutral-100 p-6 sm:p-8 lg:col-span-7 lg:max-h-[560px] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:p-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-primary">
-              {categoryNames[product.category] ?? product.category}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-primary">
+                {categoryNames[product.category] ?? product.category}
+              </span>
+
+              {product.isComingSoon && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-500 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-black shadow-sm">
+                  Coming Soon
+                </span>
+              )}
+
+              {!product.isComingSoon && product.stock < 1 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 bg-neutral-900 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
+                  Out of Stock
+                </span>
+              )}
+            </div>
 
             <h1 className="mt-3 text-2xl font-black uppercase leading-tight tracking-tight text-neutral-950 sm:text-3xl">
               {product.name}

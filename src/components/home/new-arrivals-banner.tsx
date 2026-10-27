@@ -22,7 +22,7 @@ export interface ArrivalSlide {
 const defaultSlides: ArrivalSlide[] = [
   {
     id: "slide-combat",
-    image: "/images/new-arrivals/new-arrival1.png",
+    image: "/images/new-arrivals/new-arrival-combat.png",
     imageAlt: "BIAX Martial Arts & Combat Gis",
     tag: "#NewArrivals",
     headline: "CHASE GREATNESS",
@@ -36,10 +36,10 @@ const defaultSlides: ArrivalSlide[] = [
   },
   {
     id: "slide-sportswear",
-    image: "/images/new-arrivals/new-arrival2.png",
+    image: "/images/new-arrivals/new-arrival-sportswear.png",
     imageAlt: "BIAX Performance Sportswear & Activewear",
     tag: "#NewArrivals",
-    headline: "BUILT FOR IMPACT",
+    headline: "BUILT TO PERFORM",
     subheadline: "ENGINEERED TO MOVE",
     description:
       "High-compression training tees, breathable activewear, and athletic sets crafted for heavy lifting, conditioning, and everyday grind.",
@@ -50,7 +50,7 @@ const defaultSlides: ArrivalSlide[] = [
   },
   {
     id: "slide-equipment",
-    image: "/images/new-arrivals/new-arrival3.png",
+    image: "/images/new-arrivals/new-arrival-equipment.png",
     imageAlt: "BIAX Essential Sports Equipment & Gear",
     tag: "#NewArrivals",
     headline: "ELEVATE YOUR GAME",

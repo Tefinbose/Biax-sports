@@ -31,6 +31,7 @@ export type StoreProduct = {
   rating?: number;
   reviewCount?: number;
   bestSeller?: boolean;
+  isComingSoon?: boolean;
 };
 
 type ProductCardProps = {
@@ -73,6 +74,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       e.stopPropagation();
     }
     setMessage("");
+
+    if (product.isComingSoon) {
+      setMessage("Coming soon! This item cannot be purchased yet.");
+      return;
+    }
 
     if (product.stock < 1) {
       setMessage("Currently out of stock.");
@@ -139,7 +145,11 @@ export default function ProductCard({ product }: ProductCardProps) {
               src={product.images[0]}
               alt={product.name}
               loading="lazy"
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${
+                product.isComingSoon || product.stock < 1
+                  ? "blur-[1px] opacity-90"
+                  : ""
+              }`}
             />
           ) : (
             <div className="flex h-full items-center justify-center text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -147,24 +157,44 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* Badges Container */}
-          <div className="absolute left-2 top-2 z-10 flex flex-wrap items-center gap-1 max-w-[70%]">
-            {hasDiscount && (
-              <span className="rounded-full bg-primary px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
-                {discountPercentage}% OFF
+          {/* Subtle Frosted Blur Overlay for Coming Soon */}
+          {product.isComingSoon && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/20 p-3 text-center backdrop-blur-[1px] transition duration-300">
+              <span className="rounded-full border border-amber-300/60 bg-amber-500 px-3 py-1 text-[10px] sm:text-xs font-black uppercase tracking-widest text-black shadow-lg backdrop-blur-md">
+                Coming Soon
               </span>
-            )}
-            {product.featured && !hasDiscount && (
-              <span className="rounded-full bg-neutral-950 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-sm">
-                Featured
+              <span className="mt-1.5 font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white drop-shadow-md">
+                Launching Soon
               </span>
-            )}
-          </div>
+            </div>
+          )}
 
-          {product.stock < 1 && (
-            <span className="absolute inset-x-0 bottom-0 z-10 bg-neutral-950/85 px-3 py-1.5 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider text-white backdrop-blur-sm">
-              Out of stock
-            </span>
+          {/* Subtle Frosted Blur Overlay for Out of Stock */}
+          {!product.isComingSoon && product.stock < 1 && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/25 p-3 text-center backdrop-blur-[1px] transition duration-300">
+              <span className="rounded-full border border-white/20 bg-neutral-950/90 px-3 py-1 text-[10px] sm:text-xs font-black uppercase tracking-widest text-white shadow-lg backdrop-blur-md">
+                Out of Stock
+              </span>
+              <span className="mt-1.5 font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-neutral-300 drop-shadow-md">
+                Restocking Soon
+              </span>
+            </div>
+          )}
+
+          {/* Badges Container (Discount or Featured for Active Products) */}
+          {!product.isComingSoon && product.stock >= 1 && (
+            <div className="absolute left-2 top-2 z-10 flex flex-wrap items-center gap-1 max-w-[70%]">
+              {hasDiscount && (
+                <span className="rounded-full bg-primary px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
+                  {discountPercentage}% OFF
+                </span>
+              )}
+              {product.featured && !hasDiscount && (
+                <span className="rounded-full bg-neutral-950 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-sm">
+                  Featured
+                </span>
+              )}
+            </div>
           )}
         </Link>
 
@@ -187,7 +217,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </button>
 
         {/* Hover-reveal Quick Add to Cart button */}
-        {product.stock > 0 && (
+        {!product.isComingSoon && product.stock > 0 && (
           <div className="absolute inset-x-3 bottom-3 z-10 pointer-events-none opacity-0 translate-y-3 transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
             <button
               type="button"
@@ -243,7 +273,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
           {/* Quick Add mobile button */}
-          {product.stock > 0 && (
+          {!product.isComingSoon && product.stock > 0 && (
             <button
               type="button"
               onClick={handleAddToCart}
@@ -351,6 +381,11 @@ export function ProductAddToCart({ product }: { product: StoreProduct }) {
   }
 
   function handleBuyNow() {
+    if (product.isComingSoon) {
+      setMessage("Coming soon! This item cannot be purchased yet.");
+      return;
+    }
+
     if (product.stock < 1) {
       setMessage("Currently out of stock.");
       return;
@@ -358,6 +393,22 @@ export function ProductAddToCart({ product }: { product: StoreProduct }) {
 
     handleAddToCart();
     router.push("/checkout");
+  }
+
+  if (product.isComingSoon) {
+    return (
+      <div className="mt-8 rounded-2xl border border-amber-300 bg-amber-50/80 p-6 text-center">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-500 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-black shadow-sm">
+          Coming Soon
+        </span>
+        <h3 className="mt-3 text-lg font-black uppercase tracking-tight text-neutral-900">
+          Launching Soon
+        </h3>
+        <p className="mt-1 text-sm text-neutral-600 max-w-md mx-auto">
+          This product is currently in preparation and will be available for purchase soon. Stay tuned!
+        </p>
+      </div>
+    );
   }
 
   return (

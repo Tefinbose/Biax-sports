@@ -15,6 +15,7 @@ export interface IProduct {
   sku: string;
   featured: boolean;
   published: boolean;
+  isComingSoon?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -95,13 +96,23 @@ const ProductSchema = new Schema<IProduct>(
       type: Boolean,
       default: false,
     },
+    isComingSoon: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-const Product:Model<IProduct> = (mongoose.models.Product as Model<IProduct>) || mongoose.model<IProduct>("Product", ProductSchema);
+if (process.env.NODE_ENV !== "production") {
+  delete (mongoose.models as Record<string, unknown>).Product;
+}
+
+const Product: Model<IProduct> =
+  (mongoose.models.Product as Model<IProduct>) ||
+  mongoose.model<IProduct>("Product", ProductSchema);
 
 export default Product;
 

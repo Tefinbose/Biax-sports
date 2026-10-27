@@ -45,6 +45,7 @@ async function FeaturedProductsSection() {
       images: Array.isArray(product.images) ? product.images : [],
       stock: product.stock,
       featured: Boolean(product.featured),
+      isComingSoon: Boolean(product.isComingSoon),
       bestSeller: Boolean((product as unknown as Record<string, unknown>).bestSeller ?? (product.stock > 0)),
     }));
   } catch (error) {

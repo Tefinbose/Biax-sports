@@ -26,6 +26,7 @@ const productSchema = z
     sku: z.string().trim().min(2).max(80),
     featured: z.boolean().default(false),
     published: z.boolean().default(false),
+    isComingSoon: z.boolean().default(false),
   })
   .refine(
     (data) =>

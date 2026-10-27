@@ -22,7 +22,7 @@ export async function GET(
       published: true,
     })
       .select(
-        "name slug description shortDescription category price compareAtPrice images sizes colors stock sku featured",
+        "name slug description shortDescription category price compareAtPrice images sizes colors stock sku featured isComingSoon",
       )
       .lean();
 

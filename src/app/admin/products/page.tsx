@@ -40,6 +40,7 @@ type Product = {
   sku: string;
   featured: boolean;
   published: boolean;
+  isComingSoon?: boolean;
 };
 
 type ProductForm = {
@@ -56,6 +57,7 @@ type ProductForm = {
   colors: string;
   featured: boolean;
   published: boolean;
+  isComingSoon: boolean;
 };
 
 const emptyForm: ProductForm = {
@@ -72,6 +74,7 @@ const emptyForm: ProductForm = {
   colors: "",
   featured: false,
   published: false,
+  isComingSoon: false,
 };
 
 const categories: { value: Category; label: string }[] = [
@@ -108,6 +111,7 @@ function productToForm(product: Product): ProductForm {
     colors: product.colors.join(", "),
     featured: product.featured,
     published: product.published,
+    isComingSoon: Boolean(product.isComingSoon),
   };
 }
 
@@ -232,6 +236,7 @@ export default function AdminProductsPage() {
       colors: splitValues(form.colors),
       featured: form.featured,
       published: form.published,
+      isComingSoon: form.isComingSoon,
     };
 
     setSaving(true);
@@ -338,6 +343,7 @@ export default function AdminProductsPage() {
         colors: product.colors,
         featured: product.featured,
         published: !product.published,
+        isComingSoon: Boolean(product.isComingSoon),
       };
 
       const response = await fetch("/api/admin/products", {
@@ -651,6 +657,18 @@ export default function AdminProductsPage() {
                   />
                   Publish on storefront
                 </label>
+
+                <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-900 transition hover:bg-amber-100">
+                  <input
+                    type="checkbox"
+                    checked={form.isComingSoon}
+                    onChange={(e) =>
+                      updateField("isComingSoon", e.target.checked)
+                    }
+                    className="h-4 w-4 accent-amber-600"
+                  />
+                  Mark as Coming Soon
+                </label>
               </div>
 
               <button
@@ -774,15 +792,22 @@ export default function AdminProductsPage() {
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span
-                            className={
-                              product.published
-                                ? "rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700"
-                                : "rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600"
-                            }
-                          >
-                            {product.published ? "Published" : "Draft"}
-                          </span>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span
+                              className={
+                                product.published
+                                  ? "rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700"
+                                  : "rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600"
+                              }
+                            >
+                              {product.published ? "Published" : "Draft"}
+                            </span>
+                            {product.isComingSoon && (
+                              <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-800">
+                                Coming Soon
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-5 py-4">
                           <div className="flex items-center justify-end gap-1">

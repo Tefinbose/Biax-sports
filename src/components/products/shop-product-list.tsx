@@ -20,7 +20,7 @@ export default async function ShopProductList() {
 
     const results = await Product.find({ published: true })
       .select(
-        "name slug shortDescription category price compareAtPrice images stock featured",
+        "name slug shortDescription category price compareAtPrice images stock featured isComingSoon",
       )
       .sort({ featured: -1, createdAt: -1 })
       .lean();
@@ -37,6 +37,7 @@ export default async function ShopProductList() {
       images: product.images ?? [],
       stock: product.stock,
       featured: product.featured,
+      isComingSoon: Boolean(product.isComingSoon),
     }));
   } catch (error) {
     console.error("Shop page could not load products:", error);
