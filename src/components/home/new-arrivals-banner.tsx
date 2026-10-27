@@ -50,7 +50,7 @@ const defaultSlides: ArrivalSlide[] = [
   },
   {
     id: "slide-equipment",
-    image: "/images/new-arrivals/new-arrival-equipment.png",
+    image: "/images/new-arrivals/biax-sports-gear-showcase.png",
     imageAlt: "BIAX Essential Sports Equipment & Gear",
     tag: "#NewArrivals",
     headline: "ELEVATE YOUR GAME",
