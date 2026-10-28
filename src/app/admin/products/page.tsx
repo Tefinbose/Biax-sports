@@ -18,6 +18,9 @@ import {
 } from "react-icons/fi";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import AdminLogoutButton from "@/components/admin/logout-button";
+import ProductImageUploader from "@/components/admin/product-image-uploader";
+import ProductSizeSelector from "@/components/admin/product-size-selector";
+import ProductColorSelector from "@/components/admin/product-color-selector";
 
 type Category =
   | "sportswear"
@@ -52,9 +55,9 @@ type ProductForm = {
   stock: string;
   shortDescription: string;
   description: string;
-  images: string;
-  sizes: string;
-  colors: string;
+  images: string[];
+  sizes: string[];
+  colors: string[];
   featured: boolean;
   published: boolean;
   isComingSoon: boolean;
@@ -69,9 +72,9 @@ const emptyForm: ProductForm = {
   stock: "0",
   shortDescription: "",
   description: "",
-  images: "",
-  sizes: "",
-  colors: "",
+  images: [],
+  sizes: [],
+  colors: [],
   featured: false,
   published: false,
   isComingSoon: false,
@@ -106,9 +109,9 @@ function productToForm(product: Product): ProductForm {
     stock: String(product.stock),
     shortDescription: product.shortDescription ?? "",
     description: product.description,
-    images: product.images.join("\n"),
-    sizes: product.sizes.join(", "),
-    colors: product.colors.join(", "),
+    images: Array.isArray(product.images) ? [...product.images] : [],
+    sizes: Array.isArray(product.sizes) ? [...product.sizes] : [],
+    colors: Array.isArray(product.colors) ? [...product.colors] : [],
     featured: product.featured,
     published: product.published,
     isComingSoon: Boolean(product.isComingSoon),
@@ -213,10 +216,8 @@ export default function AdminProductsPage() {
       return;
     }
 
-    const images = splitValues(form.images);
-
-    if (images.length === 0) {
-      setError("Enter at least one product image URL.");
+    if (form.images.length === 0) {
+      setError("Please upload or add at least one product image.");
       return;
     }
 
@@ -231,9 +232,9 @@ export default function AdminProductsPage() {
       stock: Number(form.stock),
       shortDescription: form.shortDescription.trim(),
       description: form.description.trim(),
-      images,
-      sizes: splitValues(form.sizes),
-      colors: splitValues(form.colors),
+      images: form.images,
+      sizes: form.sizes,
+      colors: form.colors,
       featured: form.featured,
       published: form.published,
       isComingSoon: form.isComingSoon,
@@ -595,42 +596,22 @@ export default function AdminProductsPage() {
                 />
               </label>
 
-              <label className={labelClass}>
-                Product image URLs *
-                <textarea
-                  required
-                  rows={3}
-                  className={inputClass}
-                  value={form.images}
-                  onChange={(e) => updateField("images", e.target.value)}
-                  placeholder={"Enter one image URL per line\nhttps://example.com/product.jpg"}
+              <ProductImageUploader
+                images={form.images}
+                onChange={(images) => updateField("images", images)}
+              />
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <ProductSizeSelector
+                  sizes={form.sizes}
+                  category={form.category}
+                  onChange={(sizes) => updateField("sizes", sizes)}
                 />
-                <span className="mt-1 block text-xs font-normal text-gray-500">
-                  Enter at least one image URL. File uploading will be added
-                  separately.
-                </span>
-              </label>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className={labelClass}>
-                  Sizes
-                  <input
-                    className={inputClass}
-                    value={form.sizes}
-                    onChange={(e) => updateField("sizes", e.target.value)}
-                    placeholder="S, M, L, XL, XXL"
-                  />
-                </label>
-
-                <label className={labelClass}>
-                  Colors
-                  <input
-                    className={inputClass}
-                    value={form.colors}
-                    onChange={(e) => updateField("colors", e.target.value)}
-                    placeholder="Black, Red, White"
-                  />
-                </label>
+                <ProductColorSelector
+                  colors={form.colors}
+                  onChange={(colors) => updateField("colors", colors)}
+                />
               </div>
 
               <div className="flex flex-wrap gap-5">
