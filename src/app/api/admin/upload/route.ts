@@ -6,6 +6,7 @@ import sharp from "sharp";
 import { getAdminSession } from "@/lib/auth";
 import Admin from "@/models/Admin";
 import { connectToDatabase } from "@/lib/mongodb";
+import ProductImage from "@/models/ProductImage";
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB limit per file
 
@@ -62,8 +63,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "products");
-    await mkdir(uploadDir, { recursive: true });
+    await connectToDatabase();
 
     const uploadedResults: { url: string; name: string; size: number }[] = [];
 
@@ -126,7 +126,7 @@ export async function POST(request: Request) {
           targetExt = "jpg";
           outputBuffer = await imageInstance
             .rotate()
-            .jpeg({ quality: 92, mozjpeg: true })
+            .jpeg({ quality: 90, mozjpeg: true })
             .toBuffer();
         }
       } catch (procError) {
@@ -145,13 +145,34 @@ export async function POST(request: Request) {
         }
       }
 
-      const uniqueSuffix = `${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
-      const filename = `biax_prod_${uniqueSuffix}.${targetExt}`;
-      const filepath = path.join(uploadDir, filename);
+      const mimeType =
+        targetExt === "jpg"
+          ? "image/jpeg"
+          : targetExt === "svg"
+          ? "image/svg+xml"
+          : `image/${targetExt}`;
 
-      await writeFile(filepath, outputBuffer);
+      // Persist to MongoDB (guaranteed to work in serverless/Vercel environments without EROFS errors)
+      const savedDoc = await ProductImage.create({
+        filename: file.name,
+        contentType: mimeType,
+        data: outputBuffer,
+        size: outputBuffer.length,
+      });
 
-      const publicUrl = `/uploads/products/${filename}`;
+      const publicUrl = `/api/images/${savedDoc._id}.${targetExt}`;
+
+      // Optional: Also write to local public folder if on writable filesystem (e.g. local dev)
+      try {
+        const uploadDir = path.join(process.cwd(), "public", "uploads", "products");
+        await mkdir(uploadDir, { recursive: true });
+        const uniqueSuffix = `${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
+        const filename = `biax_prod_${uniqueSuffix}.${targetExt}`;
+        await writeFile(path.join(uploadDir, filename), outputBuffer);
+      } catch {
+        // Safely ignore EROFS in read-only environments (e.g. Vercel, AWS Lambda)
+      }
+
       uploadedResults.push({
         url: publicUrl,
         name: file.name,
