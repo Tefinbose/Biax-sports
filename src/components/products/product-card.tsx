@@ -11,6 +11,7 @@ import {
   saveCart,
 } from "@/lib/cart";
 import { isWishlisted, toggleWishlist } from "@/lib/wishlist";
+import { getColorHex } from "@/lib/colors";
 
 export type StoreProduct = {
   _id?: string;
@@ -412,51 +413,80 @@ export function ProductAddToCart({ product }: { product: StoreProduct }) {
   }
 
   return (
-    <div className="mt-8 space-y-6">
+    <div className="mt-5 space-y-5">
       {product.sizes && product.sizes.length > 0 && (
         <div>
-          <label className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-900">
-            Select Size
-          </label>
-          <div className="mt-2.5 flex flex-wrap gap-2">
-            {product.sizes.map((size) => (
-              <button
-                key={size}
-                type="button"
-                onClick={() => setSelectedSize(size)}
-                className={`rounded-xl border px-4 py-2.5 text-xs font-black uppercase tracking-wider transition ${
-                  selectedSize === size
-                    ? "border-primary bg-primary text-white shadow-sm"
-                    : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-900"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+          <div className="flex items-center justify-between">
+            <label className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-900">
+              Select Size
+            </label>
+            {selectedSize && (
+              <span className="text-[11px] font-bold text-primary uppercase">
+                {selectedSize}
+              </span>
+            )}
+          </div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {product.sizes.map((size) => {
+              const isSelected = selectedSize === size;
+              return (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => setSelectedSize(size)}
+                  className={`min-w-[48px] rounded-xl border px-3.5 py-2 text-xs font-black uppercase tracking-wider transition duration-200 ${
+                    isSelected
+                      ? "border-primary bg-primary text-white shadow-sm ring-2 ring-primary/20 scale-[1.02]"
+                      : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-900 hover:bg-neutral-50"
+                  }`}
+                >
+                  {size}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
 
       {product.colors && product.colors.length > 0 && (
         <div>
-          <label className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-900">
-            Select Colour
-          </label>
-          <div className="mt-2.5 flex flex-wrap gap-2">
-            {product.colors.map((color) => (
-              <button
-                key={color}
-                type="button"
-                onClick={() => setSelectedColor(color)}
-                className={`rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
-                  selectedColor === color
-                    ? "border-primary bg-primary text-white shadow-sm"
-                    : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-900"
-                }`}
-              >
-                {color}
-              </button>
-            ))}
+          <div className="flex items-center justify-between">
+            <label className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-900">
+              Select Colour
+            </label>
+            {selectedColor && (
+              <span className="text-[11px] font-bold text-primary uppercase">
+                {selectedColor}
+              </span>
+            )}
+          </div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {product.colors.map((color) => {
+              const isSelected = selectedColor === color;
+              const hex = getColorHex(color);
+              const isLight =
+                hex.toLowerCase() === "#ffffff" || hex.toLowerCase() === "#fff";
+              return (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setSelectedColor(color)}
+                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition duration-200 ${
+                    isSelected
+                      ? "border-primary bg-primary text-white shadow-sm ring-2 ring-primary/20 scale-[1.02]"
+                      : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-900 hover:bg-neutral-50"
+                  }`}
+                >
+                  <span
+                    className={`h-3 w-3 rounded-full shrink-0 ${
+                      isLight ? "ring-1 ring-neutral-300" : ""
+                    }`}
+                    style={{ backgroundColor: hex }}
+                  />
+                  <span>{color}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

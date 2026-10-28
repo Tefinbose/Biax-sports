@@ -31,8 +31,6 @@ export default function MindsetSection() {
       id="story"
       className="relative isolate overflow-hidden bg-[#0a0a0c] px-5 py-16 text-white sm:px-8 sm:py-24 lg:px-12 lg:py-28"
     >
-      {/* Background Subtle Horizontal Speed Scanlines */}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[repeating-linear-gradient(0deg,transparent_0_3px,rgba(255,255,255,0.02)_3px_4px)]" />
 
       {/* Red Angled Geometry on Desktop (Matches the athletic split cut) */}
       <div className="pointer-events-none absolute inset-0 z-0 hidden md:block">

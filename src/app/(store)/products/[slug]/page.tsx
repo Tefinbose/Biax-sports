@@ -155,18 +155,18 @@ async function ProductContent({ slug }: { slug: string }) {
       </div>
 
       {/* COMPACT PRODUCT CARD CONTAINER */}
-      <section className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm lg:grid lg:grid-cols-12 lg:items-start">
-          {/* LEFT: Product Gallery (Reduced Width and Height) */}
-          <div className="p-6 lg:col-span-5 lg:sticky lg:top-24 lg:p-7">
+          {/* LEFT: Product Gallery (Enhanced for Multi-Image) */}
+          <div className="p-6 lg:col-span-6 lg:sticky lg:top-24 lg:p-8">
             <ProductImageGallery
               images={product.images ?? []}
               productName={product.name}
             />
           </div>
 
-          {/* RIGHT: Scrollable Product Details */}
-          <div className="custom-scrollbar border-t border-neutral-100 p-6 sm:p-8 lg:col-span-7 lg:max-h-[560px] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:p-8">
+          {/* RIGHT: Product Details (Streamlined flow, direct size/color selection) */}
+          <div className="border-t border-neutral-100 p-6 sm:p-8 lg:col-span-6 lg:border-l lg:border-t-0 lg:p-8">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-primary">
                 {categoryNames[product.category] ?? product.category}
@@ -190,7 +190,7 @@ async function ProductContent({ slug }: { slug: string }) {
             </h1>
 
             {product.shortDescription && (
-              <p className="mt-2.5 text-sm leading-6 text-neutral-600">
+              <p className="mt-2 text-sm leading-relaxed text-neutral-600">
                 {product.shortDescription}
               </p>
             )}
@@ -217,58 +217,27 @@ async function ProductContent({ slug }: { slug: string }) {
               )}
             </div>
 
-            <div className="mt-5 border-y border-neutral-100 py-4">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                {product.stock > 0 ? (
-                  <span className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3.5 py-1 text-xs font-bold text-green-700">
-                    <CheckCircle2 size={14} className="text-green-600" />
-                    In stock ({product.stock} available)
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3.5 py-1 text-xs font-bold text-primary">
-                    Currently out of stock
-                  </span>
-                )}
-              </div>
-
-              {product.sizes?.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-900">
-                    Available sizes
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {product.sizes.map((size: string) => (
-                      <span
-                        key={size}
-                        className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-neutral-800"
-                      >
-                        {size}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {product.colors?.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-900">
-                    Available colours
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {product.colors.map((color: string) => (
-                      <span
-                        key={color}
-                        className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-neutral-800"
-                      >
-                        {color}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+            {/* Stock Availability */}
+            <div className="mt-4 flex items-center gap-2 text-sm font-semibold">
+              {product.stock > 0 ? (
+                <span className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3.5 py-1 text-xs font-bold text-green-700">
+                  <CheckCircle2 size={14} className="text-green-600" />
+                  In stock ({product.stock} available)
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3.5 py-1 text-xs font-bold text-primary">
+                  Currently out of stock
+                </span>
               )}
             </div>
 
-            <div className="mt-5 space-y-2.5 rounded-xl border border-neutral-200 bg-neutral-50/70 p-4 text-xs text-neutral-600">
+            {/* DIRECT CLICKABLE SIZE & COLOUR SELECTION + ADD TO CART */}
+            <div className="border-t border-neutral-100 mt-5 pt-4">
+              <ProductAddToCart product={serializedProduct} />
+            </div>
+
+            {/* Trust Badges & Delivery Info */}
+            <div className="mt-6 space-y-2.5 rounded-2xl border border-neutral-200 bg-neutral-50/80 p-4 text-xs text-neutral-600">
               <div className="flex items-center gap-2.5">
                 <Truck size={16} className="shrink-0 text-primary" />
                 <span className="font-medium text-neutral-800">
@@ -282,8 +251,6 @@ async function ProductContent({ slug }: { slug: string }) {
                 </span>
               </div>
             </div>
-
-            <ProductAddToCart product={serializedProduct} />
           </div>
         </div>
       </section>

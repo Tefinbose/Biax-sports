@@ -61,15 +61,6 @@ export default function WhyChooseUs() {
 
   return (
     <section className="relative overflow-hidden border-t border-neutral-200/80 bg-white py-10 sm:py-16 lg:py-20">
-      {/* Background Architectural Grid Accent */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.025]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
 
       <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
         {/* Compact Header: Single line on desktop, clean on mobile */}

@@ -96,15 +96,6 @@ export default function FAQAccordion() {
 
   return (
     <section className="relative overflow-hidden border-t border-neutral-200/80 bg-white py-14 sm:py-20 lg:py-24">
-      {/* Subtle architectural background grid */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
-      />
 
       <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
         {/* SECTION HEADER */}

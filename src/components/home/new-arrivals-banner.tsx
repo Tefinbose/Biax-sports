@@ -148,15 +148,6 @@ export default function NewArrivalsBanner({
       {/* Subtle athletic red ambient glow blur on desktop */}
       <div className="pointer-events-none absolute -left-20 top-1/2 -z-10 hidden sm:block h-72 w-72 -translate-y-1/2 rounded-full bg-primary/20 blur-[120px]" />
 
-      {/* High-Tech Grid Accent (Desktop only to prevent mobile clutter) */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 hidden sm:block opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-          backgroundSize: "36px 36px",
-        }}
-      />
 
       {/* MAIN CONTENT WRAPPER */}
       <div className="relative mx-auto w-full max-w-[1440px] px-4 sm:px-8 lg:px-12">

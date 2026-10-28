@@ -65,7 +65,6 @@ export default function HomePage() {
         <div className="absolute inset-y-0 right-0 -z-10 hidden w-full bg-neutral-950 [clip-path:polygon(62%_0,100%_0,100%_100%,42%_100%)] lg:block lg:w-[58%]" />
         {/* Mobile unified athletic gradient overlay */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#d71920] via-[#c4141a] to-[#990d12] lg:hidden" />
-        <div className="absolute inset-0 -z-10 bg-[repeating-linear-gradient(115deg,transparent_0_46px,rgba(255,255,255,0.05)_46px_48px)]" />
         <div className="absolute -bottom-40 -left-32 -z-10 h-[460px] w-[460px] rounded-full border border-white/20" />
 
         <div className="mx-auto grid w-full max-w-[1440px] items-center gap-6 px-4 py-8 sm:gap-10 sm:px-8 sm:py-16 lg:grid-cols-12 lg:gap-8 lg:px-12 lg:py-4 xl:gap-12 xl:py-6">
@@ -250,7 +249,6 @@ export default function HomePage() {
 
       {/* FINAL CTA */}
       <section className="relative isolate overflow-hidden bg-primary px-5 py-14 text-white sm:px-8 sm:py-24 lg:px-12">
-        <div className="absolute inset-0 -z-10 bg-[repeating-linear-gradient(115deg,transparent_0_46px,rgba(255,255,255,0.06)_46px_48px)]" />
         <div className="mx-auto flex max-w-[1440px] flex-col gap-6 sm:gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="mb-3 sm:mb-4 text-[10px] font-bold uppercase tracking-[0.25em] text-white/70 sm:text-xs">
