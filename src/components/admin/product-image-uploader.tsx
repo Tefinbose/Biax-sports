@@ -21,6 +21,28 @@ interface ProductImageUploaderProps {
   maxImages?: number;
 }
 
+const SUPPORTED_EXTENSIONS = new Set([
+  "jpg",
+  "jpeg",
+  "jfif",
+  "pjpeg",
+  "pjp",
+  "png",
+  "webp",
+  "gif",
+  "avif",
+  "svg",
+]);
+
+function isImageFile(file: File): boolean {
+  if (file.size === 0) return false;
+  if (file.type && (file.type.startsWith("image/") || file.type === "image/jfif" || file.type === "image/pjpeg")) {
+    return true;
+  }
+  const ext = file.name.split(".").pop()?.toLowerCase() || "";
+  return SUPPORTED_EXTENSIONS.has(ext);
+}
+
 export default function ProductImageUploader({
   images,
   onChange,
@@ -36,9 +58,7 @@ export default function ProductImageUploader({
   const canAddMore = images.length < maxImages;
 
   async function handleFilesUpload(files: FileList | File[]) {
-    const validFiles = Array.from(files).filter(
-      (file) => file.type.startsWith("image/") && file.size > 0
-    );
+    const validFiles = Array.from(files).filter(isImageFile);
 
     if (validFiles.length === 0) {
       setUploadError("Please select valid image files (JPG, PNG, WebP, etc.).");
@@ -213,7 +233,7 @@ export default function ProductImageUploader({
             ref={fileInputRef}
             type="file"
             multiple
-            accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+            accept="image/*,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.png,.webp,.gif,.avif,.svg"
             onChange={handleFileInputChange}
             className="hidden"
             id="product-image-file-input"

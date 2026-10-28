@@ -2,22 +2,25 @@ import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import sharp from "sharp";
 import { getAdminSession } from "@/lib/auth";
 import Admin from "@/models/Admin";
 import { connectToDatabase } from "@/lib/mongodb";
 
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB limit per file
 
-const ALLOWED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "image/svg+xml",
-  "image/avif",
+const SUPPORTED_EXTENSIONS = new Set([
+  "jpg",
+  "jpeg",
+  "jfif",
+  "pjpeg",
+  "pjp",
+  "png",
+  "webp",
+  "gif",
+  "avif",
+  "svg",
 ]);
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
 
 async function authorizeAdmin() {
   const session = await getAdminSession();
@@ -35,28 +38,6 @@ async function authorizeAdmin() {
   return Boolean(admin);
 }
 
-function getExtension(filename: string, mimeType: string): string {
-  const ext = path.extname(filename).toLowerCase().replace(/^\./, "");
-  if (ext && ["jpg", "jpeg", "png", "webp", "gif", "svg", "avif"].includes(ext)) {
-    return ext === "jpeg" ? "jpg" : ext;
-  }
-  switch (mimeType) {
-    case "image/png":
-      return "png";
-    case "image/webp":
-      return "webp";
-    case "image/gif":
-      return "gif";
-    case "image/svg+xml":
-      return "svg";
-    case "image/avif":
-      return "avif";
-    case "image/jpeg":
-    default:
-      return "jpg";
-  }
-}
-
 export async function POST(request: Request) {
   try {
     const isAuthorized = await authorizeAdmin();
@@ -68,7 +49,7 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData();
-    // Support both single "file" and multi "files" field names
+    // Collect all files from "files" and "file" fields
     const fileEntries = [
       ...formData.getAll("files"),
       ...formData.getAll("file"),
@@ -90,34 +71,91 @@ export async function POST(request: Request) {
       if (file.size > MAX_FILE_SIZE) {
         return NextResponse.json(
           {
-            message: `File "${file.name}" exceeds the 10MB size limit. Please upload a smaller image.`,
+            message: `File "${file.name}" exceeds the 15MB size limit. Please upload a smaller image.`,
           },
           { status: 400 }
         );
       }
 
-      if (!ALLOWED_MIME_TYPES.has(file.type) && !file.type.startsWith("image/")) {
+      const originalExt = path
+        .extname(file.name)
+        .toLowerCase()
+        .replace(/^\./, "");
+
+      const isLikelyImage =
+        (file.type && file.type.startsWith("image/")) ||
+        SUPPORTED_EXTENSIONS.has(originalExt);
+
+      if (!isLikelyImage) {
         return NextResponse.json(
           {
-            message: `File "${file.name}" is not a supported image format. Supported formats: JPG, PNG, WebP, GIF, SVG, AVIF.`,
+            message: `File "${file.name}" is not a recognized image format.`,
           },
           { status: 400 }
         );
       }
 
-      const ext = getExtension(file.name, file.type);
+      const inputBuffer = Buffer.from(await file.arrayBuffer());
+      let outputBuffer: Buffer = inputBuffer;
+      let targetExt = "jpg";
+
+      try {
+        const imageInstance = sharp(inputBuffer);
+        const metadata = await imageInstance.metadata();
+
+        if (!metadata.format) {
+          throw new Error("Unrecognized image data");
+        }
+
+        if (metadata.format === "svg") {
+          targetExt = "svg";
+          outputBuffer = inputBuffer;
+        } else if (metadata.format === "gif") {
+          targetExt = "gif";
+          outputBuffer = inputBuffer;
+        } else if (metadata.format === "png") {
+          targetExt = "png";
+          // Auto-rotate according to EXIF for mobile captures and save clean PNG
+          outputBuffer = await imageInstance.rotate().toBuffer();
+        } else if (metadata.format === "webp") {
+          targetExt = "webp";
+          outputBuffer = await imageInstance.rotate().toBuffer();
+        } else {
+          // JPEG, JFIF (common in WhatsApp Web/Desktop), PJPEG, etc.
+          // Normalize to universally compatible standard JPG with auto-rotation
+          targetExt = "jpg";
+          outputBuffer = await imageInstance
+            .rotate()
+            .jpeg({ quality: 92, mozjpeg: true })
+            .toBuffer();
+        }
+      } catch (procError) {
+        // Fallback for SVG or raw formats if sharp fails
+        if (originalExt === "svg" || file.type === "image/svg+xml") {
+          targetExt = "svg";
+          outputBuffer = inputBuffer;
+        } else {
+          console.warn("Failed to process image buffer with sharp:", procError);
+          return NextResponse.json(
+            {
+              message: `Could not process image "${file.name}". Please ensure it is a valid image.`,
+            },
+            { status: 400 }
+          );
+        }
+      }
+
       const uniqueSuffix = `${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
-      const filename = `biax_prod_${uniqueSuffix}.${ext}`;
+      const filename = `biax_prod_${uniqueSuffix}.${targetExt}`;
       const filepath = path.join(uploadDir, filename);
 
-      const buffer = Buffer.from(await file.arrayBuffer());
-      await writeFile(filepath, buffer);
+      await writeFile(filepath, outputBuffer);
 
       const publicUrl = `/uploads/products/${filename}`;
       uploadedResults.push({
         url: publicUrl,
         name: file.name,
-        size: file.size,
+        size: outputBuffer.length,
       });
     }
 
