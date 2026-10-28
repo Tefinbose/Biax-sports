@@ -2,6 +2,7 @@
 
 import { useState, KeyboardEvent } from "react";
 import { FiPlus, FiX, FiCheck } from "react-icons/fi";
+import { sortSizes } from "@/lib/sizes";
 
 interface ProductSizeSelectorProps {
   sizes: string[];
@@ -72,7 +73,7 @@ export default function ProductSizeSelector({
     if (sizes.includes(trimmed)) {
       onChange(sizes.filter((s) => s !== trimmed));
     } else {
-      onChange([...sizes, trimmed]);
+      onChange(sortSizes([...sizes, trimmed]));
     }
   }
 
@@ -96,7 +97,7 @@ export default function ProductSizeSelector({
       }
     }
 
-    onChange(newSizes);
+    onChange(sortSizes(newSizes));
     setCustomInput("");
   }
 

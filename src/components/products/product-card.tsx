@@ -12,6 +12,7 @@ import {
 } from "@/lib/cart";
 import { isWishlisted, toggleWishlist } from "@/lib/wishlist";
 import { getColorHex } from "@/lib/colors";
+import { sortSizes } from "@/lib/sizes";
 
 export type StoreProduct = {
   _id?: string;
@@ -299,7 +300,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 export function ProductAddToCart({ product }: { product: StoreProduct }) {
   const router = useRouter();
   const inPageButtonRef = useRef<HTMLDivElement>(null);
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] ?? "");
+  const sortedSizes = sortSizes(product.sizes ?? []);
+  const [selectedSize, setSelectedSize] = useState(sortedSizes[0] ?? "");
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] ?? "");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -414,7 +416,7 @@ export function ProductAddToCart({ product }: { product: StoreProduct }) {
 
   return (
     <div className="mt-5 space-y-5">
-      {product.sizes && product.sizes.length > 0 && (
+      {sortedSizes && sortedSizes.length > 0 && (
         <div>
           <div className="flex items-center justify-between">
             <label className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-900">
@@ -426,15 +428,15 @@ export function ProductAddToCart({ product }: { product: StoreProduct }) {
               </span>
             )}
           </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {product.sizes.map((size) => {
+          <div className="mt-2.5 flex flex-wrap gap-2.5">
+            {sortedSizes.map((size) => {
               const isSelected = selectedSize === size;
               return (
                 <button
                   key={size}
                   type="button"
                   onClick={() => setSelectedSize(size)}
-                  className={`min-w-[48px] rounded-xl border px-3.5 py-2 text-xs font-black uppercase tracking-wider transition duration-200 ${
+                  className={`h-11 min-w-11 px-3.5 inline-flex items-center justify-center rounded-xl border text-xs font-black uppercase tracking-wider transition-all duration-200 ${
                     isSelected
                       ? "border-primary bg-primary text-white shadow-sm ring-2 ring-primary/20 scale-[1.02]"
                       : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-900 hover:bg-neutral-50"

@@ -10,6 +10,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import ProductImageGallery from "@/components/products/product-image-gallery";
 import { ProductAddToCart, type StoreProduct } from "@/components/products/product-card";
+import { sortSizes } from "@/lib/sizes";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -136,7 +137,7 @@ async function ProductContent({ slug }: { slug: string }) {
     price: product.price,
     compareAtPrice: product.compareAtPrice,
     images: product.images ?? [],
-    sizes: product.sizes ?? [],
+    sizes: sortSizes(product.sizes ?? []),
     colors: product.colors ?? [],
     stock: product.stock,
     isComingSoon: Boolean(product.isComingSoon),
