@@ -118,6 +118,7 @@ function formatCategory(category: string) {
   if (category === "sports-equipment") return "Sports Equipment";
   if (category === "martial-arts-uniforms") return "Martial Arts Uniforms";
   if (category === "sportswear") return "Sportswear";
+  if (category === "lifestyle") return "Lifestyle";
   return category
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))

@@ -43,7 +43,7 @@ export async function generateMetadata({
       title: product.name,
       description:
         product.shortDescription ||
-        product.description.slice(0, 160),
+        product.description?.slice(0, 160) || `${product.name} - BIAX Sports`,
     };
   } catch {
     return { title: "Product Details" };
@@ -118,6 +118,7 @@ async function ProductContent({ slug }: { slug: string }) {
     sportswear: "Sportswear",
     "martial-arts-uniforms": "Martial Arts Uniforms",
     "sports-equipment": "Sports Equipment",
+    lifestyle: "Lifestyle",
   };
 
   const hasDiscount =
@@ -267,7 +268,7 @@ async function ProductContent({ slug }: { slug: string }) {
 
           <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
             <p className="whitespace-pre-line text-sm leading-7 text-neutral-600">
-              {product.description}
+              {product.description || product.shortDescription || "Engineered with athlete-grade durability, precision fit, and impact-ready performance."}
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-neutral-100 pt-4 text-xs font-bold uppercase tracking-wider text-neutral-400">
               <span>SKU: {product.sku}</span>

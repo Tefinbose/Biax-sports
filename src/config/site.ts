@@ -49,6 +49,11 @@ export const siteConfig = {
     slug: "sports-equipment",
     description: "Essential equipment for athletes.",
   },
+  {
+    name: "Lifestyle",
+    slug: "lifestyle",
+    description: "Everyday tees, casual apparel, and streetwear crafted with athletic DNA.",
+  },
 ],
 
   socialLinks: {

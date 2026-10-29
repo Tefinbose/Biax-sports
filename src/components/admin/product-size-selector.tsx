@@ -7,7 +7,11 @@ import { sortSizes } from "@/lib/sizes";
 interface ProductSizeSelectorProps {
   sizes: string[];
   onChange: (sizes: string[]) => void;
-  category?: "sportswear" | "martial-arts-uniforms" | "sports-equipment";
+  category?:
+    | "sportswear"
+    | "martial-arts-uniforms"
+    | "sports-equipment"
+    | "lifestyle";
 }
 
 const PRESET_GROUPS = [

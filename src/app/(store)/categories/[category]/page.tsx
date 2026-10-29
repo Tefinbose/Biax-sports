@@ -14,6 +14,7 @@ const validCategories = [
   "sportswear",
   "martial-arts-uniforms",
   "sports-equipment",
+  "lifestyle",
 ] as const;
 
 type CategoryType = (typeof validCategories)[number];
@@ -36,6 +37,11 @@ const categoryHeroImages: Record<
     src: "/images/sports-equipments/pexels-mjrfilms-38593700.jpg",
     alt: "BIAX tournament sports equipment",
     position: "object-[center_60%]",
+  },
+  lifestyle: {
+    src: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1920&q=80",
+    alt: "BIAX lifestyle casual and streetwear collection",
+    position: "object-center",
   },
 };
 

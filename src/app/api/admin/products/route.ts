@@ -10,12 +10,13 @@ import Product from "@/models/Product";
 const productSchema = z
   .object({
     name: z.string().trim().min(2).max(150),
-    description: z.string().trim().min(10).max(10000),
+    description: z.string().trim().max(10000).optional().default(""),
     shortDescription: z.string().trim().max(300).optional(),
     category: z.enum([
       "sportswear",
       "martial-arts-uniforms",
       "sports-equipment",
+      "lifestyle",
     ]),
     price: z.number().positive().finite(),
     compareAtPrice: z.number().positive().finite().optional(),

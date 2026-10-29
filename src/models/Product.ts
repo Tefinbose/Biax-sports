@@ -3,9 +3,13 @@ import mongoose, { Schema, type Model } from "mongoose";
 export interface IProduct {
   name: string;
   slug: string;
-  description: string;
+  description?: string;
   shortDescription?: string;
-  category: "sportswear" | "martial-arts-uniforms" | "sports-equipment";
+  category:
+    | "sportswear"
+    | "martial-arts-uniforms"
+    | "sports-equipment"
+    | "lifestyle";
   price: number;
   compareAtPrice?: number;
   images: string[];
@@ -37,7 +41,8 @@ const ProductSchema = new Schema<IProduct>(
     },
     description: {
       type: String,
-      required: [true, "Product description is required"],
+      required: false,
+      default: "",
       trim: true,
     },
     shortDescription: {
@@ -47,7 +52,12 @@ const ProductSchema = new Schema<IProduct>(
     },
     category: {
       type: String,
-      enum: ["sportswear", "martial-arts-uniforms", "sports-equipment"],
+      enum: [
+        "sportswear",
+        "martial-arts-uniforms",
+        "sports-equipment",
+        "lifestyle",
+      ],
       required: true,
     },
     price: {

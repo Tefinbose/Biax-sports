@@ -25,13 +25,14 @@ import ProductColorSelector from "@/components/admin/product-color-selector";
 type Category =
   | "sportswear"
   | "martial-arts-uniforms"
-  | "sports-equipment";
+  | "sports-equipment"
+  | "lifestyle";
 
 type Product = {
   _id: string;
   name: string;
   slug: string;
-  description: string;
+  description?: string;
   shortDescription?: string;
   category: Category;
   price: number;
@@ -87,6 +88,7 @@ const categories: { value: Category; label: string }[] = [
     label: "Martial Arts Uniforms",
   },
   { value: "sports-equipment", label: "Sports Equipment" },
+  { value: "lifestyle", label: "Lifestyle" },
 ];
 
 function splitValues(value: string) {
@@ -108,7 +110,7 @@ function productToForm(product: Product): ProductForm {
         : "",
     stock: String(product.stock),
     shortDescription: product.shortDescription ?? "",
-    description: product.description,
+    description: product.description ?? "",
     images: Array.isArray(product.images) ? [...product.images] : [],
     sizes: Array.isArray(product.sizes) ? [...product.sizes] : [],
     colors: Array.isArray(product.colors) ? [...product.colors] : [],
@@ -583,10 +585,8 @@ export default function AdminProductsPage() {
               </label>
 
               <label className={labelClass}>
-                Full description *
+                Full description (optional)
                 <textarea
-                  required
-                  minLength={10}
                   maxLength={10000}
                   rows={4}
                   className={inputClass}

@@ -91,6 +91,13 @@ export default function ShopPage() {
             >
               Sports Equipment
             </Link>
+
+            <Link
+              href="/categories/lifestyle"
+              className="shrink-0 group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 sm:px-6 sm:py-3 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur transition duration-300 hover:border-white hover:bg-white hover:text-neutral-950 active:scale-95"
+            >
+              Lifestyle
+            </Link>
           </div>
         </div>
       </section>
