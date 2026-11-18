@@ -1,8 +1,6 @@
-
 import { NextResponse } from "next/server";
-
-import { connectToDatabase } from "@/lib/mongodb";
-import Product from "@/models/Product";
+import prisma from "@/lib/prisma";
+import { formatProduct } from "@/lib/db-helpers";
 
 type RouteContext = {
   params: Promise<{ slug: string }>;
@@ -15,16 +13,12 @@ export async function GET(
   try {
     const { slug } = await params;
 
-    await connectToDatabase();
-
-    const product = await Product.findOne({
-      slug,
-      published: true,
-    })
-      .select(
-        "name slug description shortDescription category price compareAtPrice images sizes colors stock sku featured isComingSoon",
-      )
-      .lean();
+    const product = await prisma.product.findFirst({
+      where: {
+        slug,
+        published: true,
+      },
+    });
 
     if (!product) {
       return NextResponse.json(
@@ -34,10 +28,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      product: {
-        ...product,
-        _id: String(product._id),
-      },
+      product: formatProduct(product),
     });
   } catch (error) {
     console.error("Failed to fetch product:", error);

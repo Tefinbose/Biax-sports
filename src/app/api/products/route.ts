@@ -1,11 +1,9 @@
-
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { connectToDatabase } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
 import { getAdminSession } from "@/lib/auth";
-import Admin from "@/models/Admin";
-import Product from "@/models/Product";
+import { formatProduct } from "@/lib/db-helpers";
 
 const productSchema = z
   .object({
@@ -50,18 +48,16 @@ function makeSlug(value: string) {
 
 async function authorizeAdmin() {
   const session = await getAdminSession();
-
   if (!session) return false;
 
-  await connectToDatabase();
-
-  const admin = await Admin.findOne({
-    _id: session.adminId,
-    active: true,
-    role: "admin",
-  })
-    .select("_id")
-    .lean();
+  const admin = await prisma.admin.findFirst({
+    where: {
+      id: session.adminId,
+      active: true,
+      role: "admin",
+    },
+    select: { id: true },
+  });
 
   return Boolean(admin);
 }
@@ -75,15 +71,12 @@ export async function GET() {
       );
     }
 
-    const products = await Product.find({})
-      .sort({ createdAt: -1 })
-      .lean();
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
     return NextResponse.json({
-      products: products.map((product) => ({
-        ...product,
-        _id: String(product._id),
-      })),
+      products: products.map(formatProduct),
     });
   } catch (error) {
     console.error("Admin products GET error:", error);
@@ -138,16 +131,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const escapedSku = sku.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    const duplicate = await Product.findOne({
-      $or: [
-        { sku: { $regex: `^${escapedSku}$`, $options: "i" } },
-        { slug },
-      ],
-    })
-      .select("_id sku slug")
-      .lean();
+    const duplicate = await prisma.product.findFirst({
+      where: {
+        OR: [{ sku }, { slug }],
+      },
+      select: { id: true, sku: true, slug: true },
+    });
 
     if (duplicate) {
       return NextResponse.json(
@@ -161,48 +150,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const product = await Product.create({
-      ...data,
-      sku,
-      slug,
+    const product = await prisma.product.create({
+      data: {
+        ...data,
+        sku,
+        slug,
+      },
     });
 
     return NextResponse.json(
       {
         message: "Product created successfully.",
-        product: {
-          _id: product._id.toString(),
-          name: product.name,
-          slug: product.slug,
-          description: product.description,
-          shortDescription: product.shortDescription,
-          category: product.category,
-          price: product.price,
-          compareAtPrice: product.compareAtPrice,
-          images: product.images,
-          sizes: product.sizes,
-          colors: product.colors,
-          stock: product.stock,
-          sku: product.sku,
-          featured: product.featured,
-          published: product.published,
-        },
+        product: formatProduct(product),
       },
       { status: 201 },
     );
   } catch (error: unknown) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      error.code === 11000
-    ) {
-      return NextResponse.json(
-        { message: "A product with this name, slug, or SKU already exists." },
-        { status: 409 },
-      );
-    }
-
     console.error("Admin products POST error:", error);
 
     return NextResponse.json(

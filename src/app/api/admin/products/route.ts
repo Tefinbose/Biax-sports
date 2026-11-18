@@ -1,11 +1,8 @@
-
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
 import { z } from "zod";
-import { connectToDatabase } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
 import { getAdminSession } from "@/lib/auth";
-import Admin from "@/models/Admin";
-import Product from "@/models/Product";
+import { formatProduct } from "@/lib/db-helpers";
 
 const productSchema = z
   .object({
@@ -50,45 +47,18 @@ function makeSlug(value: string) {
 
 async function authorizeAdmin() {
   const session = await getAdminSession();
-
   if (!session) return false;
 
-  await connectToDatabase();
-
-  const admin = await Admin.findOne({
-    _id: session.adminId,
-    active: true,
-    role: "admin",
-  })
-    .select("_id")
-    .lean();
+  const admin = await prisma.admin.findFirst({
+    where: {
+      id: session.adminId,
+      active: true,
+      role: "admin",
+    },
+    select: { id: true },
+  });
 
   return Boolean(admin);
-}
-
-function isDuplicateKeyError(error: unknown) {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    error.code === 11000
-  );
-}
-
-function errorResponse(error: unknown, action: string) {
-  if (isDuplicateKeyError(error)) {
-    return NextResponse.json(
-      { message: "A product with this name, slug, or SKU already exists." },
-      { status: 409 },
-    );
-  }
-
-  console.error(`Admin products ${action} error:`, error);
-
-  return NextResponse.json(
-    { message: `Unable to ${action.toLowerCase()} the product. Please try again.` },
-    { status: 500 },
-  );
 }
 
 export async function GET() {
@@ -100,18 +70,20 @@ export async function GET() {
       );
     }
 
-    const products = await Product.find({})
-      .sort({ createdAt: -1 })
-      .lean();
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
     return NextResponse.json({
-      products: products.map((product) => ({
-        ...product,
-        _id: String(product._id),
-      })),
+      products: products.map(formatProduct),
     });
   } catch (error) {
-    return errorResponse(error, "load");
+    console.error("Admin products GET error:", error);
+
+    return NextResponse.json(
+      { message: "Unable to load products right now." },
+      { status: 500 },
+    );
   }
 }
 
@@ -139,12 +111,16 @@ export async function POST(request: Request) {
 
     if (!result.success) {
       return NextResponse.json(
-        { message: result.error.issues[0]?.message ?? "Invalid product details." },
+        {
+          message:
+            result.error.issues[0]?.message ?? "Invalid product details.",
+        },
         { status: 400 },
       );
     }
 
     const data = result.data;
+    const sku = data.sku.trim();
     const slug = makeSlug(data.name);
 
     if (!slug) {
@@ -154,16 +130,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const escapedSku = data.sku.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    const duplicate = await Product.findOne({
-      $or: [
-        { sku: { $regex: `^${escapedSku}$`, $options: "i" } },
-        { slug },
-      ],
-    })
-      .select("_id")
-      .lean();
+    const duplicate = await prisma.product.findFirst({
+      where: {
+        OR: [{ sku }, { slug }],
+      },
+      select: { id: true, sku: true, slug: true },
+    });
 
     if (duplicate) {
       return NextResponse.json(
@@ -172,21 +144,27 @@ export async function POST(request: Request) {
       );
     }
 
-    const product = await Product.create({
-      ...data,
-      sku: data.sku.trim(),
-      slug,
+    const product = await prisma.product.create({
+      data: {
+        ...data,
+        sku,
+        slug,
+      },
     });
 
     return NextResponse.json(
       {
         message: "Product created successfully.",
-        product: { ...product.toObject(), _id: product._id.toString() },
+        product: formatProduct(product),
       },
       { status: 201 },
     );
   } catch (error) {
-    return errorResponse(error, "create");
+    console.error("Admin products POST error:", error);
+    return NextResponse.json(
+      { message: "Unable to create product." },
+      { status: 500 },
+    );
   }
 }
 
@@ -214,8 +192,7 @@ export async function PUT(request: Request) {
       typeof body !== "object" ||
       body === null ||
       !("id" in body) ||
-      typeof body.id !== "string" ||
-      !mongoose.isValidObjectId(body.id)
+      typeof body.id !== "string"
     ) {
       return NextResponse.json(
         { message: "A valid product ID is required." },
@@ -234,6 +211,7 @@ export async function PUT(request: Request) {
     }
 
     const data = result.data;
+    const sku = data.sku.trim();
     const slug = makeSlug(data.name);
 
     if (!slug) {
@@ -243,7 +221,10 @@ export async function PUT(request: Request) {
       );
     }
 
-    const existingProduct = await Product.findById(id).select("_id").lean();
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      select: { id: true },
+    });
 
     if (!existingProduct) {
       return NextResponse.json(
@@ -252,17 +233,13 @@ export async function PUT(request: Request) {
       );
     }
 
-    const escapedSku = data.sku.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    const duplicate = await Product.findOne({
-      _id: { $ne: id },
-      $or: [
-        { sku: { $regex: `^${escapedSku}$`, $options: "i" } },
-        { slug },
-      ],
-    })
-      .select("_id")
-      .lean();
+    const duplicate = await prisma.product.findFirst({
+      where: {
+        NOT: { id },
+        OR: [{ sku }, { slug }],
+      },
+      select: { id: true },
+    });
 
     if (duplicate) {
       return NextResponse.json(
@@ -271,25 +248,21 @@ export async function PUT(request: Request) {
       );
     }
 
-    const product = await Product.findByIdAndUpdate(
-      id,
-      { ...data, sku: data.sku.trim(), slug },
-      { new: true, runValidators: true },
-    ).lean();
-
-    if (!product) {
-      return NextResponse.json(
-        { message: "Product not found." },
-        { status: 404 },
-      );
-    }
+    const product = await prisma.product.update({
+      where: { id },
+      data: { ...data, sku, slug },
+    });
 
     return NextResponse.json({
       message: "Product updated successfully.",
-      product: { ...product, _id: String(product._id) },
+      product: formatProduct(product),
     });
   } catch (error) {
-    return errorResponse(error, "update");
+    console.error("Admin products PUT error:", error);
+    return NextResponse.json(
+      { message: "Unable to update product." },
+      { status: 500 },
+    );
   }
 }
 
@@ -304,24 +277,35 @@ export async function DELETE(request: Request) {
 
     const id = new URL(request.url).searchParams.get("id");
 
-    if (!id || !mongoose.isValidObjectId(id)) {
+    if (!id) {
       return NextResponse.json(
         { message: "A valid product ID is required." },
         { status: 400 },
       );
     }
 
-    const product = await Product.findByIdAndDelete(id).lean();
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      select: { id: true },
+    });
 
-    if (!product) {
+    if (!existingProduct) {
       return NextResponse.json(
         { message: "Product not found." },
         { status: 404 },
       );
     }
 
+    await prisma.product.delete({
+      where: { id },
+    });
+
     return NextResponse.json({ message: "Product deleted successfully." });
   } catch (error) {
-    return errorResponse(error, "delete");
+    console.error("Admin products DELETE error:", error);
+    return NextResponse.json(
+      { message: "Unable to delete product." },
+      { status: 500 },
+    );
   }
 }

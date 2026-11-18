@@ -4,9 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import sharp from "sharp";
 import { getAdminSession } from "@/lib/auth";
-import Admin from "@/models/Admin";
-import { connectToDatabase } from "@/lib/mongodb";
-import ProductImage from "@/models/ProductImage";
+import prisma from "@/lib/prisma";
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB limit per file
 
@@ -27,14 +25,14 @@ async function authorizeAdmin() {
   const session = await getAdminSession();
   if (!session) return false;
 
-  await connectToDatabase();
-  const admin = await Admin.findOne({
-    _id: session.adminId,
-    active: true,
-    role: "admin",
-  })
-    .select("_id")
-    .lean();
+  const admin = await prisma.admin.findFirst({
+    where: {
+      id: session.adminId,
+      active: true,
+      role: "admin",
+    },
+    select: { id: true },
+  });
 
   return Boolean(admin);
 }
@@ -62,8 +60,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    await connectToDatabase();
 
     const uploadedResults: { url: string; name: string; size: number }[] = [];
 
@@ -115,14 +111,11 @@ export async function POST(request: Request) {
           outputBuffer = inputBuffer;
         } else if (metadata.format === "png") {
           targetExt = "png";
-          // Auto-rotate according to EXIF for mobile captures and save clean PNG
           outputBuffer = await imageInstance.rotate().toBuffer();
         } else if (metadata.format === "webp") {
           targetExt = "webp";
           outputBuffer = await imageInstance.rotate().toBuffer();
         } else {
-          // JPEG, JFIF (common in WhatsApp Web/Desktop), PJPEG, etc.
-          // Normalize to universally compatible standard JPG with auto-rotation
           targetExt = "jpg";
           outputBuffer = await imageInstance
             .rotate()
@@ -130,7 +123,6 @@ export async function POST(request: Request) {
             .toBuffer();
         }
       } catch (procError) {
-        // Fallback for SVG or raw formats if sharp fails
         if (originalExt === "svg" || file.type === "image/svg+xml") {
           targetExt = "svg";
           outputBuffer = inputBuffer;
@@ -152,17 +144,19 @@ export async function POST(request: Request) {
           ? "image/svg+xml"
           : `image/${targetExt}`;
 
-      // Persist to MongoDB (guaranteed to work in serverless/Vercel environments without EROFS errors)
-      const savedDoc = await ProductImage.create({
-        filename: file.name,
-        contentType: mimeType,
-        data: outputBuffer,
-        size: outputBuffer.length,
+      // Persist to TiDB database (LONGBLOB)
+      const savedDoc = await prisma.productImage.create({
+        data: {
+          filename: file.name,
+          contentType: mimeType,
+          data: outputBuffer,
+          size: outputBuffer.length,
+        },
       });
 
-      const publicUrl = `/api/images/${savedDoc._id}.${targetExt}`;
+      const publicUrl = `/api/images/${savedDoc.id}.${targetExt}`;
 
-      // Optional: Also write to local public folder if on writable filesystem (e.g. local dev)
+      // Optional: Also write to local public folder if on writable filesystem
       try {
         const uploadDir = path.join(process.cwd(), "public", "uploads", "products");
         await mkdir(uploadDir, { recursive: true });
@@ -170,7 +164,7 @@ export async function POST(request: Request) {
         const filename = `biax_prod_${uniqueSuffix}.${targetExt}`;
         await writeFile(path.join(uploadDir, filename), outputBuffer);
       } catch {
-        // Safely ignore EROFS in read-only environments (e.g. Vercel, AWS Lambda)
+        // Safely ignore in read-only environments
       }
 
       uploadedResults.push({

@@ -6,8 +6,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle2, ShieldCheck, Truck } from "lucide-react";
 
-import { connectToDatabase } from "@/lib/mongodb";
-import Product from "@/models/Product";
+import prisma from "@/lib/prisma";
 import ProductImageGallery from "@/components/products/product-image-gallery";
 import { ProductAddToCart, type StoreProduct } from "@/components/products/product-card";
 import { sortSizes } from "@/lib/sizes";
@@ -26,14 +25,17 @@ export async function generateMetadata({
   await connection();
 
   try {
-    await connectToDatabase();
-
-    const product = await Product.findOne({
-      slug,
-      published: true,
-    })
-      .select("name shortDescription description")
-      .lean();
+    const product = await prisma.product.findFirst({
+      where: {
+        slug,
+        published: true,
+      },
+      select: {
+        name: true,
+        shortDescription: true,
+        description: true,
+      },
+    });
 
     if (!product) {
       return { title: "Product Not Found" };
@@ -72,16 +74,12 @@ async function ProductContent({ slug }: { slug: string }) {
   let product;
 
   try {
-    await connectToDatabase();
-
-    product = await Product.findOne({
-      slug,
-      published: true,
-    })
-      .select(
-        "name slug description shortDescription category price compareAtPrice images sizes colors stock sku isComingSoon",
-      )
-      .lean();
+    product = await prisma.product.findFirst({
+      where: {
+        slug,
+        published: true,
+      },
+    });
   } catch (error) {
     console.error("Failed to load product details:", error);
 
@@ -127,19 +125,29 @@ async function ProductContent({ slug }: { slug: string }) {
 
   const compareAtPrice = product.compareAtPrice;
 
+  const productImages = Array.isArray(product.images)
+    ? (product.images as string[])
+    : [];
+  const productSizes = Array.isArray(product.sizes)
+    ? (product.sizes as string[])
+    : [];
+  const productColors = Array.isArray(product.colors)
+    ? (product.colors as string[])
+    : [];
+
   const serializedProduct: StoreProduct = {
-    _id: String(product._id),
-    id: String(product._id),
+    _id: product.id,
+    id: product.id,
     name: product.name,
     slug: product.slug,
-    description: product.description,
-    shortDescription: product.shortDescription,
+    description: product.description ?? undefined,
+    shortDescription: product.shortDescription ?? undefined,
     category: product.category,
     price: product.price,
-    compareAtPrice: product.compareAtPrice,
-    images: product.images ?? [],
-    sizes: sortSizes(product.sizes ?? []),
-    colors: product.colors ?? [],
+    compareAtPrice: product.compareAtPrice ?? undefined,
+    images: productImages,
+    sizes: sortSizes(productSizes),
+    colors: productColors,
     stock: product.stock,
     isComingSoon: Boolean(product.isComingSoon),
   };
@@ -162,7 +170,7 @@ async function ProductContent({ slug }: { slug: string }) {
           {/* LEFT: Product Gallery (Enhanced for Multi-Image) */}
           <div className="p-6 lg:col-span-6 lg:sticky lg:top-24 lg:p-8">
             <ProductImageGallery
-              images={product.images ?? []}
+              images={productImages}
               productName={product.name}
             />
           </div>

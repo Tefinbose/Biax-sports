@@ -20,10 +20,7 @@ import {
 import { FaRupeeSign } from "react-icons/fa6";
 
 import { getAdminSession } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/mongodb";
-import Order from "@/models/Order";
-import Product from "@/models/Product";
-import Coupon from "@/models/Coupon";
+import prisma from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import AdminLogoutButton from "@/components/admin/logout-button";
 
@@ -100,114 +97,81 @@ async function DashboardContent() {
     redirect("/admin/login");
   }
 
-  await connectToDatabase();
-
   const now = new Date();
   const startDate = new Date(now);
   startDate.setUTCDate(startDate.getUTCDate() - 6);
   startDate.setUTCHours(0, 0, 0, 0);
 
-  // Fetch real data from MongoDB in parallel
+  // Fetch real data from TiDB in parallel
   const [
-    orderStats,
+    allOrders,
     totalProducts,
-    uniqueCustomers,
-    recentSales,
-    recentOrders,
+    recentRawOrders,
     activeCoupons,
   ] = await Promise.all([
-    // Aggregate overall order stats & revenue
-    Order.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalOrders: { $sum: 1 },
-          paidRevenue: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$paymentStatus", "paid"] },
-                    { $ne: ["$orderStatus", "cancelled"] },
-                  ],
-                },
-                { $ifNull: ["$total", 0] },
-                0,
-              ],
-            },
-          },
-          paidOrders: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$paymentStatus", "paid"] },
-                    { $ne: ["$orderStatus", "cancelled"] },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
-        },
+    prisma.order.findMany({
+      select: {
+        total: true,
+        paymentStatus: true,
+        orderStatus: true,
+        customerEmail: true,
+        customerPhone: true,
+        createdAt: true,
       },
-    ]),
-
-    // Total products in store
-    Product.countDocuments(),
-
-    // Count distinct customer emails
-    Order.distinct("customer.email"),
-
-    // 7-day sales aggregation
-    Order.aggregate([
-      {
-        $match: {
-          paymentStatus: "paid",
-          orderStatus: { $ne: "cancelled" },
-          createdAt: { $gte: startDate, $lte: now },
-        },
+    }),
+    prisma.product.count(),
+    prisma.order.findMany({
+      select: {
+        id: true,
+        orderNumber: true,
+        customerName: true,
+        customerEmail: true,
+        total: true,
+        orderStatus: true,
+        paymentStatus: true,
+        createdAt: true,
       },
-      {
-        $group: {
-          _id: {
-            $dateToString: {
-              format: "%Y-%m-%d",
-              date: "$createdAt",
-              timezone: "UTC",
-            },
-          },
-          revenue: { $sum: { $ifNull: ["$total", 0] } },
-          orders: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: 1 } },
-    ]),
-
-    // Recent 5 orders
-    Order.find({})
-      .select("orderNumber customer total orderStatus paymentStatus createdAt")
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .lean(),
-
-    // Active coupons in store
-    Coupon.countDocuments({ active: true }),
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    prisma.coupon.count({ where: { active: true } }),
   ]);
 
-  const totalOrders = orderStats[0]?.totalOrders ?? 0;
-  const paidRevenue = orderStats[0]?.paidRevenue ?? 0;
-  const customerCount = uniqueCustomers.length;
-
-  // Build full 7-day trend array
+  let totalOrders = 0;
+  let paidRevenue = 0;
+  const uniqueCustomers = new Set<string>();
   const salesByDate = new Map<string, { revenue: number; orders: number }>();
-  for (const item of recentSales) {
-    salesByDate.set(item._id, {
-      revenue: item.revenue,
-      orders: item.orders,
-    });
+
+  for (const order of allOrders) {
+    totalOrders++;
+    const isPaid = order.paymentStatus === "paid";
+    const isCancelled = order.orderStatus === "cancelled";
+    const total = Number(order.total) || 0;
+
+    if (isPaid && !isCancelled) {
+      paidRevenue += total;
+      if (order.createdAt >= startDate && order.createdAt <= now) {
+        const key = order.createdAt.toISOString().slice(0, 10);
+        const cur = salesByDate.get(key) || { revenue: 0, orders: 0 };
+        cur.revenue += total;
+        cur.orders++;
+        salesByDate.set(key, cur);
+      }
+    }
+
+    const custKey = (order.customerEmail || order.customerPhone || "").toLowerCase();
+    if (custKey) uniqueCustomers.add(custKey);
   }
+
+  const customerCount = uniqueCustomers.size;
+  const recentOrders = recentRawOrders.map((o) => ({
+    ...o,
+    _id: o.id,
+    customer: {
+      name: o.customerName,
+      email: o.customerEmail,
+    },
+  }));
 
   const salesTrend = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(startDate);

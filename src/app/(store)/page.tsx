@@ -16,8 +16,7 @@ import WhyChooseUs from "@/components/home/why-choose-us";
 import MindsetSection from "@/components/home/mindset-section";
 import BrandStatsStrip from "@/components/home/brand-stats-strip";
 import NewArrivalsBanner from "@/components/home/new-arrivals-banner";
-import { connectToDatabase } from "@/lib/mongodb";
-import Product from "@/models/Product";
+import prisma from "@/lib/prisma";
 import type { StoreProduct } from "@/components/products/product-card";
 
 export const instant = false;
@@ -27,29 +26,32 @@ async function FeaturedProductsSection() {
   let products: StoreProduct[] = [];
 
   try {
-    await connectToDatabase();
-    const results = await Product.find({ published: true })
-      .sort({ featured: -1, createdAt: -1 })
-      .limit(12)
-      .lean();
+    const results = await prisma.product.findMany({
+      where: { published: true },
+      orderBy: [
+        { featured: "desc" },
+        { createdAt: "desc" },
+      ],
+      take: 12,
+    });
 
     products = results.map((product) => ({
-      _id: String(product._id),
-      id: String(product._id),
+      _id: product.id,
+      id: product.id,
       name: product.name,
       slug: product.slug,
-      shortDescription: product.shortDescription,
+      shortDescription: product.shortDescription ?? undefined,
       category: product.category,
       price: product.price,
-      compareAtPrice: product.compareAtPrice,
-      images: Array.isArray(product.images) ? product.images : [],
+      compareAtPrice: product.compareAtPrice ?? undefined,
+      images: Array.isArray(product.images) ? (product.images as string[]) : [],
       stock: product.stock,
       featured: Boolean(product.featured),
       isComingSoon: Boolean(product.isComingSoon),
-      bestSeller: Boolean((product as unknown as Record<string, unknown>).bestSeller ?? (product.stock > 0)),
+      bestSeller: product.stock > 0,
     }));
   } catch (error) {
-    console.warn("Could not load products for HomePage from MongoDB:", error);
+    console.warn("Could not load products for HomePage from TiDB:", error);
   }
 
   return <FeaturedProducts products={products} />;

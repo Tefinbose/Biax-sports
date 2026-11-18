@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
-import { connectToDatabase } from "@/lib/mongodb";
-import ProductImage from "@/models/ProductImage";
+import prisma from "@/lib/prisma";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -12,12 +10,17 @@ export async function GET(request: Request, context: RouteContext) {
     const { id } = await context.params;
     const cleanId = id.replace(/\.[a-zA-Z0-9]+$/, "");
 
-    if (!mongoose.Types.ObjectId.isValid(cleanId)) {
-      return new NextResponse("Invalid image ID", { status: 400 });
-    }
-
-    await connectToDatabase();
-    const doc = await ProductImage.findById(cleanId).select("data contentType size");
+    const doc = await prisma.productImage.findFirst({
+      where: {
+        OR: [
+          { id: cleanId },
+          { id: id },
+          { filename: id },
+          { filename: cleanId },
+        ],
+      },
+      select: { data: true, contentType: true, size: true },
+    });
 
     if (!doc || !doc.data) {
       return new NextResponse("Image not found", { status: 404 });
@@ -33,7 +36,7 @@ export async function GET(request: Request, context: RouteContext) {
       headers,
     });
   } catch (error) {
-    console.error("Error serving image from MongoDB:", error);
+    console.error("Error serving image from TiDB:", error);
     return new NextResponse("Error fetching image", { status: 500 });
   }
 }

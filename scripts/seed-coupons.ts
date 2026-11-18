@@ -1,24 +1,18 @@
 import { config } from "dotenv";
-import mongoose from "mongoose";
+import { PrismaClient } from "@prisma/client";
 
 config({ path: ".env.local" });
+config({ path: ".env" });
+
+const prisma = new PrismaClient();
 
 async function seedCoupons() {
   try {
-    if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is missing from .env.local");
-    }
-
-    const { connectToDatabase } = await import("../src/lib/mongodb");
-    const { default: Coupon } = await import("../src/models/Coupon");
-
-    await connectToDatabase();
-
     const starterCoupons = [
       {
         code: "BIAX10",
         description: "10% off on all sportswear and martial arts gear",
-        discountType: "percentage" as const,
+        discountType: "percentage",
         discountValue: 10,
         minOrderValue: 0,
         active: true,
@@ -26,7 +20,7 @@ async function seedCoupons() {
       {
         code: "IMPACT20",
         description: "20% off on orders above ₹1,999 (Max ₹500 off)",
-        discountType: "percentage" as const,
+        discountType: "percentage",
         discountValue: 20,
         minOrderValue: 1999,
         maxDiscountAmount: 500,
@@ -35,7 +29,7 @@ async function seedCoupons() {
       {
         code: "WELCOME500",
         description: "Flat ₹500 discount for new athletes on orders above ₹2,499",
-        discountType: "flat" as const,
+        discountType: "flat",
         discountValue: 500,
         minOrderValue: 2499,
         active: true,
@@ -43,12 +37,12 @@ async function seedCoupons() {
     ];
 
     for (const c of starterCoupons) {
-      const exists = await Coupon.findOne({ code: c.code });
+      const exists = await prisma.coupon.findUnique({ where: { code: c.code } });
       if (!exists) {
-        await Coupon.create(c);
-        console.log(`Created starter coupon: ${c.code}`);
+        await prisma.coupon.create({ data: c });
+        console.log(`Created starter coupon in TiDB: ${c.code}`);
       } else {
-        console.log(`Coupon already exists: ${c.code}`);
+        console.log(`Coupon already exists in TiDB: ${c.code}`);
       }
     }
 
@@ -56,7 +50,7 @@ async function seedCoupons() {
   } catch (err) {
     console.error("Coupon seeding failed:", err);
   } finally {
-    await mongoose.disconnect().catch(() => {});
+    await prisma.$disconnect().catch(() => {});
   }
 }
 

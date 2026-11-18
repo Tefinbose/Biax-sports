@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import {z} from "zod";
+import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-import { connectToDatabase } from "@/lib/mongodb";
-import Admin from "@/models/Admin";
+import prisma from "@/lib/prisma";
 import {
   createAdminSession,
   SESSION_COOKIE_NAME,
@@ -30,13 +29,13 @@ export async function POST(request: Request) {
     const email = result.data.email.toLowerCase();
     const { password } = result.data;
 
-    await connectToDatabase();
-
-    const admin = await Admin.findOne({
-      email,
-      active: true,
-      role: "admin",
-    }).select("+passwordHash");
+    const admin = await prisma.admin.findFirst({
+      where: {
+        email,
+        active: true,
+        role: "admin",
+      },
+    });
 
     if (!admin) {
       return NextResponse.json(
@@ -58,7 +57,7 @@ export async function POST(request: Request) {
     }
 
     const token = await createAdminSession(
-      admin._id.toString(),
+      admin.id,
       admin.email,
     );
 

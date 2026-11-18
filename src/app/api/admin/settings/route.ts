@@ -1,9 +1,7 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getAdminSession } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/mongodb";
-import StoreSettings from "@/models/StoreSettings";
+import prisma from "@/lib/prisma";
 
 const settingsSchema = z.object({
   storeName: z.string().trim().min(1).max(100),
@@ -38,15 +36,20 @@ export async function GET() {
       );
     }
 
-    await connectToDatabase();
-
-    let settings = await StoreSettings.findOne().lean();
+    let settings = await prisma.storeSettings.findFirst();
 
     if (!settings) {
-      settings = await StoreSettings.create(defaultSettings);
+      settings = await prisma.storeSettings.create({
+        data: defaultSettings,
+      });
     }
 
-    return NextResponse.json({ settings });
+    return NextResponse.json({
+      settings: {
+        ...settings,
+        _id: settings.id,
+      },
+    });
   } catch (error) {
     console.error("Admin settings GET error:", error);
 
@@ -81,22 +84,26 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    await connectToDatabase();
+    let existing = await prisma.storeSettings.findFirst();
+    let settings;
 
-    const settings = await StoreSettings.findOneAndUpdate(
-      {},
-      { $set: parsed.data, $setOnInsert: {} },
-      {
-        new: true,
-        upsert: true,
-        runValidators: true,
-        setDefaultsOnInsert: true,
-      }
-    );
+    if (existing) {
+      settings = await prisma.storeSettings.update({
+        where: { id: existing.id },
+        data: parsed.data,
+      });
+    } else {
+      settings = await prisma.storeSettings.create({
+        data: parsed.data,
+      });
+    }
 
     return NextResponse.json({
       message: "Store settings saved successfully.",
-      settings,
+      settings: {
+        ...settings,
+        _id: settings.id,
+      },
     });
   } catch (error) {
     console.error("Admin settings PUT error:", error);

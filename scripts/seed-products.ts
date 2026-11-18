@@ -1,19 +1,18 @@
-
 import { config } from "dotenv";
-import mongoose from "mongoose";
-import Product, { type IProduct } from "../src/models/Product";
+import { PrismaClient } from "@prisma/client";
 
 // Load environment variables from the project root.
 config({ path: ".env.local" });
+config({ path: ".env" });
 
-type SeedProduct = Omit<IProduct, "createdAt" | "updatedAt">;
+const prisma = new PrismaClient();
 
-const seedProducts: SeedProduct[] = [
+const seedProducts = [
   {
     name: "BIAX Performance Training T-Shirt",
     slug: "biax-performance-training-tshirt",
     description:
-      "A performance-focused training T-shirt designed for comfort, movement, and everyday workouts. Sample product: update the specifications to match your actual product before selling.",
+      "A performance-focused training T-shirt designed for comfort, movement, and everyday workouts.",
     shortDescription:
       "Lightweight training T-shirt for everyday athletic performance.",
     category: "sportswear",
@@ -33,7 +32,7 @@ const seedProducts: SeedProduct[] = [
     name: "BIAX Athletic Training Wear",
     slug: "biax-athletic-training-wear",
     description:
-      "Athletic training wear intended for gym sessions and active lifestyles. Sample product: confirm the material, fit, and specifications before selling.",
+      "Athletic training wear intended for gym sessions and active lifestyles.",
     shortDescription:
       "Comfortable athletic wear for training and active days.",
     category: "sportswear",
@@ -53,7 +52,7 @@ const seedProducts: SeedProduct[] = [
     name: "BIAX Martial Arts Training Uniform",
     slug: "biax-martial-arts-training-uniform",
     description:
-      "A sample martial arts training uniform listing. Replace this description with the correct fabric, weight, sizing, and care details for your actual uniform.",
+      "A premium martial arts training uniform engineered for durability, discipline, and comfort.",
     shortDescription:
       "Training uniform for martial arts practice.",
     category: "martial-arts-uniforms",
@@ -73,7 +72,7 @@ const seedProducts: SeedProduct[] = [
     name: "BIAX Combat Sports Gloves",
     slug: "biax-combat-sports-gloves",
     description:
-      "A sample combat sports glove listing. Verify the glove type, size, materials, and intended use before making this product available for purchase.",
+      "Tournament-grade combat sports gloves designed for rigorous training sessions.",
     shortDescription:
       "Combat sports gloves for training sessions.",
     category: "martial-arts-uniforms",
@@ -93,7 +92,7 @@ const seedProducts: SeedProduct[] = [
     name: "BIAX Training Football",
     slug: "biax-training-football",
     description:
-      "A sample football listing for training and practice. Update the construction, size, and surface suitability details to match your actual product.",
+      "High-durability football for training, drills, and match practice.",
     shortDescription:
       "Football for training and practice.",
     category: "sports-equipment",
@@ -113,7 +112,7 @@ const seedProducts: SeedProduct[] = [
     name: "BIAX Sports Training Shoes",
     slug: "biax-sports-training-shoes",
     description:
-      "A sample sports shoe listing for athletic training. Confirm the shoe design, sizing, materials, and performance features before selling.",
+      "Athletic sports shoes engineered for athletic training and everyday movement.",
     shortDescription:
       "Sports shoes for training and everyday athletic activities.",
     category: "sports-equipment",
@@ -133,27 +132,16 @@ const seedProducts: SeedProduct[] = [
 
 async function seedDatabase(): Promise<void> {
   try {
-    // Validate the MongoDB connection string before importing the DB helper.
-    if (!process.env.MONGODB_URI) {
-      throw new Error(
-        "MONGODB_URI is missing. Check .env.local in your project root.",
-      );
-    }
-
-    // Import dynamically so .env.local is loaded before mongodb.ts reads it.
-    const { connectToDatabase } = await import("../src/lib/mongodb");
-
-    await connectToDatabase();
-    console.log("Connected to MongoDB.");
+    console.log("Connected to TiDB for seeding products.");
 
     for (const product of seedProducts) {
-      await Product.updateOne(
-        { sku: product.sku },
-        { $set: product },
-        { upsert: true, runValidators: true },
-      );
+      await prisma.product.upsert({
+        where: { sku: product.sku },
+        update: product,
+        create: product,
+      });
 
-      console.log(`Seeded: ${product.name}`);
+      console.log(`Seeded in TiDB: ${product.name}`);
     }
 
     console.log(
@@ -163,9 +151,7 @@ async function seedDatabase(): Promise<void> {
     console.error("\nSeeding failed:", error);
     process.exitCode = 1;
   } finally {
-    await mongoose.disconnect().catch(() => {
-      // Ignore disconnect errors if the database connection never opened.
-    });
+    await prisma.$disconnect().catch(() => {});
   }
 }
 

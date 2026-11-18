@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
 import { z } from "zod";
-import { connectToDatabase } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
 import { getAdminSession } from "@/lib/auth";
-import Coupon from "@/models/Coupon";
 
 const couponSchema = z.object({
   code: z
@@ -30,11 +28,13 @@ export async function GET() {
       return NextResponse.json({ message: "Unauthorized." }, { status: 401 });
     }
 
-    await connectToDatabase();
+    const coupons = await prisma.coupon.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
-    const coupons = await Coupon.find().sort({ createdAt: -1 }).lean();
-
-    return NextResponse.json({ coupons });
+    return NextResponse.json({
+      coupons: coupons.map((c) => ({ ...c, _id: c.id })),
+    });
   } catch (error) {
     console.error("Admin coupons GET error:", error);
     return NextResponse.json(
@@ -70,9 +70,11 @@ export async function POST(request: Request) {
       );
     }
 
-    await connectToDatabase();
+    const existing = await prisma.coupon.findUnique({
+      where: { code: data.code },
+      select: { id: true },
+    });
 
-    const existing = await Coupon.findOne({ code: data.code }).select("_id");
     if (existing) {
       return NextResponse.json(
         { message: `Coupon '${data.code}' already exists.` },
@@ -80,8 +82,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const [coupon] = await Coupon.create([
-      {
+    const coupon = await prisma.coupon.create({
+      data: {
         code: data.code,
         description: data.description,
         discountType: data.discountType,
@@ -93,10 +95,13 @@ export async function POST(request: Request) {
         endDate: data.endDate ? new Date(data.endDate) : null,
         active: data.active,
       },
-    ]);
+    });
 
     return NextResponse.json(
-      { message: `Coupon '${coupon.code}' created successfully.`, coupon },
+      {
+        message: `Coupon '${coupon.code}' created successfully.`,
+        coupon: { ...coupon, _id: coupon.id },
+      },
       { status: 201 },
     );
   } catch (error) {
@@ -123,9 +128,10 @@ export async function PUT(request: Request) {
       );
     }
 
-    await connectToDatabase();
+    const existing = await prisma.coupon.findUnique({
+      where: { id: body.id },
+    });
 
-    const existing = await Coupon.findById(body.id);
     if (!existing) {
       return NextResponse.json(
         { message: "Coupon not found." },
@@ -138,10 +144,14 @@ export async function PUT(request: Request) {
     if (body.code && typeof body.code === "string") {
       const formattedCode = body.code.trim().toUpperCase();
       if (formattedCode !== existing.code) {
-        const duplicate = await Coupon.findOne({
-          code: formattedCode,
-          _id: { $ne: body.id },
-        }).select("_id");
+        const duplicate = await prisma.coupon.findFirst({
+          where: {
+            code: formattedCode,
+            NOT: { id: body.id },
+          },
+          select: { id: true },
+        });
+
         if (duplicate) {
           return NextResponse.json(
             { message: `A coupon with code '${formattedCode}' already exists.` },
@@ -197,20 +207,14 @@ export async function PUT(request: Request) {
       updateData.minOrderValue = Math.max(0, Number(body.minOrderValue) || 0);
     }
 
-    const coupon = await Coupon.findByIdAndUpdate(body.id, updateData, {
-      new: true,
+    const coupon = await prisma.coupon.update({
+      where: { id: body.id },
+      data: updateData,
     });
-
-    if (!coupon) {
-      return NextResponse.json(
-        { message: "Coupon not found." },
-        { status: 404 },
-      );
-    }
 
     return NextResponse.json({
       message: `Coupon '${coupon.code}' updated successfully.`,
-      coupon,
+      coupon: { ...coupon, _id: coupon.id },
     });
   } catch (error) {
     console.error("Admin coupons PUT error:", error);
@@ -231,23 +235,22 @@ export async function DELETE(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    if (!id) {
       return NextResponse.json(
         { message: "Valid Coupon ID is required." },
         { status: 400 },
       );
     }
 
-    await connectToDatabase();
-
-    const deleted = await Coupon.findByIdAndDelete(id);
-
-    if (!deleted) {
+    const existing = await prisma.coupon.findUnique({ where: { id } });
+    if (!existing) {
       return NextResponse.json(
         { message: "Coupon not found." },
         { status: 404 },
       );
     }
+
+    const deleted = await prisma.coupon.delete({ where: { id } });
 
     return NextResponse.json({
       message: `Coupon '${deleted.code}' deleted successfully.`,

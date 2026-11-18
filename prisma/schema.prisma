@@ -1,0 +1,135 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(254)
+  passwordHash String   @db.VarChar(255)
+  role         String   @default("admin") @db.VarChar(30)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  name             String   @db.VarChar(160)
+  slug             String   @unique @db.VarChar(191)
+  description      String?  @db.Text
+  shortDescription String?  @db.Text
+  category         String   @db.VarChar(60)
+  price            Float
+  compareAtPrice   Float?
+  images           Json
+  sizes            Json
+  colors           Json
+  stock            Int      @default(0)
+  sku              String   @unique @db.VarChar(80)
+  featured         Boolean  @default(false)
+  published        Boolean  @default(false)
+  isComingSoon     Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique @db.VarChar(64)
+  customerName   String      @db.VarChar(150)
+  customerEmail  String      @db.VarChar(254)
+  customerPhone  String      @db.VarChar(50)
+  addressLine1   String      @db.VarChar(255)
+  addressLine2   String?     @db.VarChar(255)
+  city           String      @db.VarChar(100)
+  state          String      @db.VarChar(100)
+  postalCode     String      @db.VarChar(30)
+  country        String      @default("India") @db.VarChar(100)
+  subtotal       Float
+  shippingCharge Float       @default(0)
+  couponCode     String?     @db.VarChar(32)
+  discountAmount Float       @default(0)
+  total          Float
+  paymentMethod  String      @default("cod") @db.VarChar(30)
+  paymentStatus  String      @default("pending") @db.VarChar(30)
+  orderStatus    String      @default("pending") @db.VarChar(30)
+  customerNotes  String?     @db.Text
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  items          OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String   @db.VarChar(64)
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?  @db.VarChar(64)
+  name      String   @db.VarChar(200)
+  slug      String   @db.VarChar(191)
+  image     String?  @db.VarChar(1000)
+  price     Float
+  quantity  Int
+  lineTotal Float
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model Coupon {
+  id                String    @id @default(cuid())
+  code              String    @unique @db.VarChar(32)
+  description       String?   @db.VarChar(255)
+  discountType      String    @default("percentage") @db.VarChar(30)
+  discountValue     Float
+  minOrderValue     Float     @default(0)
+  maxDiscountAmount Float?
+  usageLimit        Int?
+  usedCount         Int       @default(0)
+  startDate         DateTime?
+  endDate           DateTime?
+  active            Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("coupons")
+}
+
+model StoreSettings {
+  id                    String   @id @default(cuid())
+  storeName             String   @default("BIAX SPORTS") @db.VarChar(150)
+  tagline               String   @default("Empowering Athletes. Elevating Performance.") @db.VarChar(255)
+  contactEmail          String   @default("info@biaxsports.com") @db.VarChar(254)
+  phone                 String   @default("") @db.VarChar(50)
+  address               String   @default("") @db.VarChar(500)
+  shippingCharge        Float    @default(0)
+  freeShippingThreshold Float    @default(0)
+  codEnabled            Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("store_settings")
+}
+
+model ProductImage {
+  id          String   @id @default(cuid())
+  filename    String   @db.VarChar(255)
+  contentType String   @default("image/jpeg") @db.VarChar(100)
+  data        Bytes    @db.LongBlob
+  size        Int
+  createdAt   DateTime @default(now())
+
+  @@map("product_images")
+}

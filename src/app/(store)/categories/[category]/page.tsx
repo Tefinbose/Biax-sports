@@ -4,8 +4,7 @@ import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ShoppingBag } from "lucide-react";
-import Product, { type IProduct } from "@/models/Product";
-import { connectToDatabase } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
 import ProductCard, { type StoreProduct } from "@/components/products/product-card";
 
 export const instant = false;
@@ -72,18 +71,32 @@ function CategoryProductsFallback() {
 
 async function CategoryProductList({ category }: { category: string }) {
   await connection();
-  await connectToDatabase();
 
-  const products = await Product.find({
-    category: category as IProduct["category"],
-    published: true,
-  })
-    .sort({ featured: -1, createdAt: -1 })
-    .lean();
+  const rawProducts = await prisma.product.findMany({
+    where: {
+      category,
+      published: true,
+    },
+    orderBy: [
+      { featured: "desc" },
+      { createdAt: "desc" },
+    ],
+  });
 
-  const serializableProducts = JSON.parse(
-    JSON.stringify(products)
-  ) as StoreProduct[];
+  const serializableProducts: StoreProduct[] = rawProducts.map((p) => ({
+    _id: p.id,
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    shortDescription: p.shortDescription ?? undefined,
+    category: p.category,
+    price: p.price,
+    compareAtPrice: p.compareAtPrice ?? undefined,
+    images: Array.isArray(p.images) ? (p.images as string[]) : [],
+    stock: p.stock,
+    featured: p.featured,
+    isComingSoon: Boolean(p.isComingSoon),
+  }));
 
   if (serializableProducts.length === 0) {
     return (

@@ -1,15 +1,6 @@
-
 import { NextRequest, NextResponse } from "next/server";
-import type { PipelineStage } from "mongoose";
-import { connectToDatabase } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
 import { getAdminSession } from "@/lib/auth";
-import Order from "@/models/Order";
-
-
-
-function escapeRegex(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,90 +13,62 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await connectToDatabase();
-
     const search = request.nextUrl.searchParams
       .get("search")
       ?.trim()
+      .toLowerCase()
       .slice(0, 100);
 
-    const pipeline: PipelineStage[] = [
-      // Show each customer's latest order first.
-      { $sort: { createdAt: -1 } },
+    const orders = await prisma.order.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
-      // Combine orders belonging to the same customer.
-      {
-        $group: {
-          _id: {
-            $toLower: {
-              $ifNull: [
-                "$customer.email",
-                {
-                  $ifNull: [
-                    "$customer.phone",
-                    { $toString: "$_id" },
-                  ],
-                },
-              ],
-            },
+    const customerMap = new Map<string, any>();
+
+    for (const order of orders) {
+      const key = (order.customerEmail || order.customerPhone || order.id).toLowerCase();
+
+      if (!customerMap.has(key)) {
+        customerMap.set(key, {
+          id: key,
+          name: order.customerName,
+          email: order.customerEmail,
+          phone: order.customerPhone,
+          latestAddress: {
+            addressLine1: order.addressLine1,
+            addressLine2: order.addressLine2 || "",
+            city: order.city,
+            state: order.state,
+            postalCode: order.postalCode,
+            country: order.country,
           },
-          name: { $first: "$customer.name" },
-          email: { $first: "$customer.email" },
-          phone: { $first: "$customer.phone" },
-          latestAddress: { $first: "$shippingAddress" },
-          orderCount: { $sum: 1 },
-          totalOrderValue: {
-            $sum: {
-              $cond: [
-                { $ne: ["$orderStatus", "cancelled"] },
-                { $ifNull: ["$total", 0] },
-                0,
-              ],
-            },
-          },
-          lastOrderAt: { $first: "$createdAt" },
-          latestOrderNumber: { $first: "$orderNumber" },
-        },
-      },
-    ];
+          orderCount: 0,
+          totalOrderValue: 0,
+          lastOrderAt: order.createdAt,
+          latestOrderNumber: order.orderNumber,
+        });
+      }
 
-    if (search) {
-      const safeSearch = new RegExp(escapeRegex(search), "i");
-
-      pipeline.push({
-        $match: {
-          $or: [
-            { name: safeSearch },
-            { email: safeSearch },
-            { phone: safeSearch },
-          ],
-        },
-      });
+      const record = customerMap.get(key);
+      record.orderCount += 1;
+      if (order.orderStatus !== "cancelled") {
+        record.totalOrderValue += Number(order.total) || 0;
+      }
     }
 
-    pipeline.push(
-      { $sort: { lastOrderAt: -1 } },
-      { $limit: 500 },
-      {
-        $project: {
-          _id: 0,
-          id: "$_id",
-          name: 1,
-          email: 1,
-          phone: 1,
-          latestAddress: 1,
-          orderCount: 1,
-          totalOrderValue: 1,
-          lastOrderAt: 1,
-          latestOrderNumber: 1,
-        },
-      },
-    );
+    let customers = Array.from(customerMap.values());
 
-    const customers = await Order.aggregate(pipeline);
+    if (search) {
+      customers = customers.filter(
+        (c) =>
+          c.name?.toLowerCase().includes(search) ||
+          c.email?.toLowerCase().includes(search) ||
+          c.phone?.toLowerCase().includes(search),
+      );
+    }
 
     return NextResponse.json({
-      customers,
+      customers: customers.slice(0, 500),
       total: customers.length,
     });
   } catch (error) {

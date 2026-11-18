@@ -1,18 +1,12 @@
-
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
 import { z } from "zod";
 
-import { connectToDatabase } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
 import { getAdminSession } from "@/lib/auth";
-import Order from "@/models/Order";
-import Product from "@/models/Product";
+import { formatOrder } from "@/lib/db-helpers";
 
 const updateOrderSchema = z.object({
-  orderId: z.string().refine(
-    (value) => mongoose.isValidObjectId(value),
-    "Invalid order ID.",
-  ),
+  orderId: z.string().min(1, "Invalid order ID."),
   orderStatus: z.enum([
     "pending",
     "confirmed",
@@ -22,10 +16,6 @@ const updateOrderSchema = z.object({
     "cancelled",
   ]),
 });
-
-function escapeRegex(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
 
 export async function GET(request: Request) {
   try {
@@ -37,8 +27,6 @@ export async function GET(request: Request) {
         { status: 401 },
       );
     }
-
-    await connectToDatabase();
 
     const { searchParams } = new URL(request.url);
     const search = (searchParams.get("search") ?? "").trim().slice(0, 100);
@@ -60,34 +48,33 @@ export async function GET(request: Request) {
       );
     }
 
-    const filter: Record<string, unknown> = {};
+    const where: any = {};
 
     if (status !== "all") {
-      filter.orderStatus = status;
+      where.orderStatus = status;
     }
 
     if (search) {
-      const safeSearch = new RegExp(escapeRegex(search), "i");
-
-      filter.$or = [
-        { orderNumber: safeSearch },
-        { "customer.name": safeSearch },
-        { "customer.email": safeSearch },
-        { "customer.phone": safeSearch },
+      where.OR = [
+        { orderNumber: { contains: search } },
+        { customerName: { contains: search } },
+        { customerEmail: { contains: search } },
+        { customerPhone: { contains: search } },
       ];
     }
 
-    const orders = await Order.find(filter)
-      .select(
-        "orderNumber customer shippingAddress items subtotal shippingCharge total paymentMethod paymentStatus orderStatus createdAt updatedAt",
-      )
-      .sort({ createdAt: -1 })
-      .limit(200)
-      .lean();
+    const orders = await prisma.order.findMany({
+      where,
+      include: { items: true },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    });
+
+    const formattedOrders = orders.map(formatOrder);
 
     return NextResponse.json({
-      orders,
-      count: orders.length,
+      orders: formattedOrders,
+      count: formattedOrders.length,
     });
   } catch (error) {
     console.error("Admin orders GET error:", error);
@@ -134,9 +121,10 @@ export async function PUT(request: Request) {
       );
     }
 
-    await connectToDatabase();
-
-    const currentOrder = await Order.findById(validation.data.orderId);
+    const currentOrder = await prisma.order.findUnique({
+      where: { id: validation.data.orderId },
+      include: { items: true },
+    });
 
     if (!currentOrder) {
       return NextResponse.json(
@@ -152,19 +140,23 @@ export async function PUT(request: Request) {
     ) {
       for (const item of currentOrder.items) {
         if (item.productId) {
-          await Product.findByIdAndUpdate(item.productId, {
-            $inc: { stock: item.quantity },
+          await prisma.product.updateMany({
+            where: { id: item.productId },
+            data: { stock: { increment: item.quantity } },
           });
         }
       }
     }
 
-    currentOrder.orderStatus = validation.data.orderStatus;
-    await currentOrder.save();
+    const updated = await prisma.order.update({
+      where: { id: currentOrder.id },
+      data: { orderStatus: validation.data.orderStatus },
+      include: { items: true },
+    });
 
     return NextResponse.json({
       message: "Order status updated successfully.",
-      order: currentOrder,
+      order: formatOrder(updated),
     });
   } catch (error) {
     console.error("Admin orders PUT error:", error);

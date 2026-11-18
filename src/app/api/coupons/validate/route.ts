@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
-import Coupon from "@/models/Coupon";
+import prisma from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
@@ -23,9 +22,9 @@ export async function POST(request: Request) {
       );
     }
 
-    await connectToDatabase();
-
-    const coupon = await Coupon.findOne({ code, active: true }).lean();
+    const coupon = await prisma.coupon.findFirst({
+      where: { code, active: true },
+    });
 
     if (!coupon) {
       return NextResponse.json(
@@ -68,7 +67,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           valid: false,
-          message: `Minimum order value of ₹${coupon.minOrderValue.toLocaleString("en-IN")} required for this coupon.`,
+          message: `This coupon requires a minimum subtotal of ₹${coupon.minOrderValue.toLocaleString("en-IN")}.`,
         },
         { status: 400 },
       );
@@ -77,33 +76,36 @@ export async function POST(request: Request) {
     let discountAmount = 0;
 
     if (coupon.discountType === "percentage") {
-      const calculated = Math.round((subtotal * coupon.discountValue) / 100);
-      if (coupon.maxDiscountAmount && coupon.maxDiscountAmount > 0) {
-        discountAmount = Math.min(calculated, coupon.maxDiscountAmount);
-      } else {
-        discountAmount = calculated;
+      discountAmount = (subtotal * coupon.discountValue) / 100;
+      if (
+        typeof coupon.maxDiscountAmount === "number" &&
+        coupon.maxDiscountAmount > 0
+      ) {
+        discountAmount = Math.min(discountAmount, coupon.maxDiscountAmount);
       }
     } else {
-      // Flat amount discount
-      discountAmount = Math.min(subtotal, Math.round(coupon.discountValue));
+      discountAmount = Math.min(coupon.discountValue, subtotal);
     }
+
+    discountAmount = Math.round(discountAmount * 100) / 100;
 
     return NextResponse.json({
       valid: true,
+      message: `Coupon '${coupon.code}' applied successfully!`,
       coupon: {
+        _id: coupon.id,
+        id: coupon.id,
         code: coupon.code,
         discountType: coupon.discountType,
         discountValue: coupon.discountValue,
         discountAmount,
-        description: coupon.description,
         minOrderValue: coupon.minOrderValue,
       },
-      message: `Coupon '${coupon.code}' applied! You save ₹${discountAmount.toLocaleString("en-IN")}.`,
     });
   } catch (error) {
     console.error("Coupon validation error:", error);
     return NextResponse.json(
-      { valid: false, message: "Unable to validate coupon right now." },
+      { valid: false, message: "Unable to validate coupon." },
       { status: 500 },
     );
   }
